@@ -8,7 +8,11 @@ import reportWebVitals from './reportWebVitals';
 const apiBaseUrl = process.env.API_BASE_URL;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
