@@ -1,0 +1,16 @@
+.dashboard-view {
+  background-color: #121212;
+  color: white;
+  padding: 20px 40px;
+}
+
+.dashboard-view h2 {
+  color: #1DB954;
+  margin-bottom: 20px;
+}
+
+.dashboard-cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
