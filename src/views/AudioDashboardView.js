@@ -1,32 +1,42 @@
-import React, { Suspense, lazy, useCallback, useState } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { Link } from 'react-router-dom';
+import './AudioDashboardView.css';
 
-const AudioPlayer = lazy(() => import('../components/Dashboard/AudioPlayer'));
-const AudioList = lazy(() => import('../components/Dashboard/AudioList'));
-const AddAudio = lazy(() => import('../components/Dashboard/AddAudio'));
+const AudioUpdate = lazy(
+  () => import('../components/Dashboard/Audio/AudioUpdate')
+);
+const AudioList = lazy(() => import('../components/Dashboard/Audio/AudioList'));
 
 const AudioDashboardView = () => {
   const [selectedAudioId, setSelectedAudioId] = useState('');
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
 
-  const handlePlay = useCallback((audioId) => {
+  const handleSelectAudioForEdit = (audioId) => {
     setSelectedAudioId(audioId);
-  }, []);
+    setEditModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setEditModalOpen(false);
+  };
 
   return (
     <div>
       <h2>Audio Dashboard</h2>
-      <Suspense fallback={<div>Chargement des audios...</div>}>
-        <AudioList onSelectAudio={handlePlay} />
-      </Suspense>
-      <Suspense fallback={<div>Chargement du lecteur audio...</div>}>
-        <AudioPlayer audioId={selectedAudioId} />
-      </Suspense>
-      {/*
-      <Suspense fallback={<div>Chargement du formulaire d&apos;ajout...</div>}>
-        <AddAudio />
+      <Suspense fallback={<div>Chargement...</div>}>
+        <AudioList onSelectAudio={handleSelectAudioForEdit} />
+        {isEditModalOpen && (
+          <div className="modal">
+            <div className="modal-content">
+              <AudioUpdate
+                audioId={selectedAudioId}
+                onClose={handleCloseModal}
+              />
+            </div>
+          </div>
+        )}
       </Suspense>
       <Link to="/dashboard">Retour au Tableau de Bord Principal</Link>
-  */}
     </div>
   );
 };

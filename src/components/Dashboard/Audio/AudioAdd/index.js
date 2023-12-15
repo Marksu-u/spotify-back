@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AddAudio = () => {
+const AudioADD = () => {
   // Formulaire pour ajouter un nouvel audio
   return (
     <div>
@@ -9,4 +9,4 @@ const AddAudio = () => {
   );
 };
 
-export default AddAudio; // React.memo peut aussi être utilisé ici si nécessaire
+export default AudioADD; // React.memo peut aussi être utilisé ici si nécessaire

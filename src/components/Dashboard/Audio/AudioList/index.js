@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { FixedSizeList as List } from 'react-window';
-import { apiService } from '../../../services/apiService';
-import { notificationService } from '../../../services/notificationService';
+import { apiService } from '../../../../services/apiService';
+import { notificationService } from '../../../../services/notificationService';
 import AudioTrack from '../AudioTrack';
 
 const AudioList = ({ onSelectAudio }) => {
@@ -26,21 +25,11 @@ const AudioList = ({ onSelectAudio }) => {
     fetchAndSetAudios();
   }, []);
 
-  const handleSelectAudio = useCallback(
+  const handleSelectAudioForEdit = useCallback(
     (audioId) => {
       onSelectAudio(audioId);
     },
     [onSelectAudio]
-  );
-
-  const renderedAudios = useMemo(
-    () =>
-      audios.map((audio) => (
-        <li key={audio.id} onClick={() => handleSelectAudio(audio.id)}>
-          {audio.title}
-        </li>
-      )),
-    [audios, handleSelectAudio]
   );
 
   if (isLoading) return <div>Chargement des audios...</div>;
@@ -58,7 +47,7 @@ const AudioList = ({ onSelectAudio }) => {
             date={audio.metadata.date}
             genre={audio.metadata.genre}
             picture={audio.metadata.picture}
-            onPlay={() => handlePlay(audio._id)}
+            onEdit={() => handleSelectAudioForEdit(audio._id)}
           />
         ))
       ) : (

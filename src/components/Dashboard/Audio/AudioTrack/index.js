@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './index.css';
 
-const AudioTrack = ({ title, album, artist, date, genre, picture, onPlay }) => {
+const AudioTrack = ({ title, album, artist, date, genre, picture, onEdit }) => {
   let imageSrc = '';
 
   if (picture && picture.length > 0) {
@@ -24,8 +24,8 @@ const AudioTrack = ({ title, album, artist, date, genre, picture, onPlay }) => {
           <div className="audio-track-genre">{genre.join(', ')}</div>
         </div>
       </div>
-      <button className="audio-track-play" onClick={onPlay}>
-        Play
+      <button className="audio-track-edit" onClick={onEdit}>
+        Edit
       </button>
     </div>
   );
@@ -46,7 +46,7 @@ AudioTrack.propTypes = {
       format: PropTypes.string.isRequired,
     })
   ),
-  onPlay: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
 };
 
 export default AudioTrack;
