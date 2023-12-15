@@ -4,9 +4,6 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-// Utilisez `apiBaseUrl` pour vos configurations
-const apiBaseUrl = process.env.API_BASE_URL;
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

@@ -1,0 +1,6 @@
+.card-list {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+  }
+  

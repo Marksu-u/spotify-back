@@ -1,16 +1,18 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import { notificationService } from './notificationService';
 
 const API_URL = process.env.REACT_APP_API_URL;
 console.log(API_URL);
 
 const login = async (username, password) => {
-  const response = await axios.post(`${API_URL}/api/admin/log`, {
+  const response = await axios.post(`${API_URL}admin/log`, {
     username,
     password,
   });
   if (response.data.token) {
     localStorage.setItem('userToken', response.data.token);
+    notificationService.notify('Connecté(e) !', 'success');
   }
   return response.data;
 };

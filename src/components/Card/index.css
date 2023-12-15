@@ -1,0 +1,20 @@
+.card {
+    background-color: #181818;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    margin-right: 15px;
+  }
+  
+  .card-image {
+    width: 100%;
+    border-radius: 4px;
+  }
+  
+  .card-title {
+    margin-top: 8px;
+    font-size: 16px;
+  }
+  
