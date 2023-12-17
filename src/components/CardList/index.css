@@ -1,6 +1,7 @@
 .card-list {
-    display: flex;
-    overflow-x: auto;
-    padding: 10px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #121212;
+}

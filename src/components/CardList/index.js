@@ -1,24 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Card from '../Card';
-import './index.css';
 
-const CardList = ({ items }) => (
-  <div className="card-list">
-    {items.map((item) => (
-      <Card key={item.id} {...item} />
-    ))}
-  </div>
-);
+const List = ({ items, type }) => {
+  const renderListItems = () => {
+    return items.map((item) => <Card key={item._id} data={item} type={type} />);
+  };
 
-CardList.propTypes = {
-  items: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      title: PropTypes.string.isRequired,
-      image: PropTypes.string.isRequired,
-    })
-  ).isRequired,
+  return <div>{renderListItems()}</div>;
 };
 
-export default CardList;
+List.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  type: PropTypes.oneOf(['artist', 'song', 'album', 'admin']).isRequired,
+};
+
+export default List;

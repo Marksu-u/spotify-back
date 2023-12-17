@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import CardList from '../components/CardList';
-import Card from '../components/Card';
 import { apiService } from '../services/apiService';
 import './AudioDashboardView.css';
 
@@ -19,7 +18,7 @@ const AudioDashboardView = () => {
             album: audio.metadata.album.title,
             date: audio.metadata.date,
             genre: audio.metadata.genre.join(', '),
-            image: convertBufferToImageUrl(audio.metadata.picture),
+            image: audio.metadata.picture,
           }))
         );
       } catch (error) {
@@ -30,18 +29,12 @@ const AudioDashboardView = () => {
     fetchAudios();
   }, []);
 
-  const convertBufferToImageUrl = (pictureData) => {
-    let imageSrc = '';
-    if (pictureData && pictureData.length > 0) {
-      const blob = new Blob([new Uint8Array(pictureData)], {
-        type: 'image/jpeg',
-      });
-      imageSrc = URL.createObjectURL(blob);
-    }
-    return imageSrc;
-  };
-
-  return <div className="audio-dashboard-view">Titre</div>;
+  return (
+    <div className="audio-dashboard-view">
+      <h1>Audio Dashboard</h1>
+      <CardList items={audios} type="song" />
+    </div>
+  );
 };
 
 export default AudioDashboardView;
