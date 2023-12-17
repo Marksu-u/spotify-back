@@ -2,10 +2,9 @@ import { toast } from 'react-toastify';
 
 export const notificationService = {
   notify: (message, type = 'info', options = {}) => {
-    // Définir les options de la notification
     const defaultOptions = {
       position: 'top-right',
-      autoClose: 3000,
+      autoClose: 2000,
     };
 
     const mergedOptions = { ...defaultOptions, ...options };

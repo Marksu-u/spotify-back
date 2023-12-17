@@ -2,20 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './index.css';
 
-const Input = ({ label, type, value, onChange }) => (
-  <div className="input-container">
-    {label && <label>{label}</label>}
-    <input type={type} value={value} onChange={onChange} />
+const Input = ({ label, type = 'text', value, onChange, name }) => (
+  <div className="input-group">
+    {label && <label className="input-label">{label}</label>}
+    <input
+      type={type}
+      className="input-field"
+      value={value}
+      onChange={onChange}
+      name={name}
+    />
   </div>
 );
 
-// PropTypes permet de s'assurer que le composant reçoit les bons types de props.
-// Pour la prévention des bugs en garantissant que les props passées au composant sont du type attendu
 Input.propTypes = {
   label: PropTypes.string,
-  type: PropTypes.string.isRequired,
+  type: PropTypes.string,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
 };
 
-export default Input;
+export default React.memo(Input);

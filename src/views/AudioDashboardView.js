@@ -1,44 +1,47 @@
-import React, { Suspense, lazy, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import CardList from '../components/CardList';
+import Card from '../components/Card';
+import { apiService } from '../services/apiService';
 import './AudioDashboardView.css';
 
-const AudioUpdate = lazy(
-  () => import('../components/Dashboard/Audio/AudioUpdate')
-);
-const AudioList = lazy(() => import('../components/Dashboard/Audio/AudioList'));
-
 const AudioDashboardView = () => {
-  const [selectedAudioId, setSelectedAudioId] = useState('');
-  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [audios, setAudios] = useState([]);
 
-  const handleSelectAudioForEdit = (audioId) => {
-    setSelectedAudioId(audioId);
-    setEditModalOpen(true);
+  useEffect(() => {
+    const fetchAudios = async () => {
+      try {
+        const fetchedAudios = await apiService.getAudios();
+        setAudios(
+          fetchedAudios.map((audio) => ({
+            id: audio._id,
+            title: audio.filename,
+            artist: audio.metadata.artist.name,
+            album: audio.metadata.album.title,
+            date: audio.metadata.date,
+            genre: audio.metadata.genre.join(', '),
+            image: convertBufferToImageUrl(audio.metadata.picture),
+          }))
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchAudios();
+  }, []);
+
+  const convertBufferToImageUrl = (pictureData) => {
+    let imageSrc = '';
+    if (pictureData && pictureData.length > 0) {
+      const blob = new Blob([new Uint8Array(pictureData)], {
+        type: 'image/jpeg',
+      });
+      imageSrc = URL.createObjectURL(blob);
+    }
+    return imageSrc;
   };
 
-  const handleCloseModal = () => {
-    setEditModalOpen(false);
-  };
-
-  return (
-    <div>
-      <h2>Audio Dashboard</h2>
-      <Suspense fallback={<div>Chargement...</div>}>
-        <AudioList onSelectAudio={handleSelectAudioForEdit} />
-        {isEditModalOpen && (
-          <div className="modal">
-            <div className="modal-content">
-              <AudioUpdate
-                audioId={selectedAudioId}
-                onClose={handleCloseModal}
-              />
-            </div>
-          </div>
-        )}
-      </Suspense>
-      <Link to="/dashboard">Retour au Tableau de Bord Principal</Link>
-    </div>
-  );
+  return <div className="audio-dashboard-view">Titre</div>;
 };
 
 export default AudioDashboardView;

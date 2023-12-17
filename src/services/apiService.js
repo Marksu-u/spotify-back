@@ -157,7 +157,7 @@ const deleteAlbum = async (id) => {
 
 /* ------------- ADMIN ------------- */
 const loginAdmin = async (credentials) => {
-  const response = await fetch(`${API_URL}/admin/log`, {
+  const response = await fetch(`${API_URL}admin/log`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -168,8 +168,21 @@ const loginAdmin = async (credentials) => {
   return await response.json();
 };
 
+const getAdmins = async (token) => {
+  const response = await fetch(`${API_URL}admin/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok)
+    throw new Error(
+      'Erreur lors de la récupération des données des administrateurs'
+    );
+  return await response.json();
+};
+
 const getSingleAdmin = async (id, token) => {
-  const response = await fetch(`${API_URL}/admin/${id}`, {
+  const response = await fetch(`${API_URL}admin/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -182,7 +195,7 @@ const getSingleAdmin = async (id, token) => {
 };
 
 const addAdmin = async (adminData, token) => {
-  const response = await fetch(`${API_URL}/admin`, {
+  const response = await fetch(`${API_URL}admin`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -196,7 +209,7 @@ const addAdmin = async (adminData, token) => {
 };
 
 const updateAdmin = async (id, adminData, token) => {
-  const response = await fetch(`${API_URL}/admin/${id}`, {
+  const response = await fetch(`${API_URL}admin/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -210,7 +223,7 @@ const updateAdmin = async (id, adminData, token) => {
 };
 
 const deleteAdmin = async (id, token) => {
-  const response = await fetch(`${API_URL}/admin/${id}`, {
+  const response = await fetch(`${API_URL}admin/${id}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -244,6 +257,7 @@ export const apiService = {
   deleteAlbum,
   /* ------------- ADMIN ------------- */
   loginAdmin,
+  getAdmins,
   getSingleAdmin,
   addAdmin,
   updateAdmin,

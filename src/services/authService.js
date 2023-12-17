@@ -3,7 +3,6 @@ import { jwtDecode } from 'jwt-decode';
 import { notificationService } from './notificationService';
 
 const API_URL = process.env.REACT_APP_API_URL;
-console.log(API_URL);
 
 const login = async (username, password) => {
   const response = await axios.post(`${API_URL}admin/log`, {
@@ -20,6 +19,7 @@ const login = async (username, password) => {
 const logout = () => {
   localStorage.removeItem('userToken');
   dispatch({ type: 'LOGOUT' });
+  navigate('/login');
 };
 
 const getCurrentUser = () => {
