@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Card from '../Card';
 import { apiService } from '../../services/apiService';
 
-const List = ({ items, type }) => {
+const CardList = ({ items, type }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
   const [audioUrl, setAudioUrl] = useState(''); // Nouvel état pour l'URL audio
@@ -14,6 +14,8 @@ const List = ({ items, type }) => {
     switch (action) {
       case 'read':
         try {
+          // const streamedAudio = await apiService.streamAudio(itemData.id);
+          console.log(itemData.id);
         } catch (error) {
           console.error('Erreur lors du streaming de l’audio', error);
         }
@@ -32,7 +34,7 @@ const List = ({ items, type }) => {
   const renderListItems = useMemo(
     () =>
       items.map((item) => (
-        <Card key={item._id} data={item} type={type} onCRUD={handleCRUD} />
+        <Card key={item.id} data={item} type={type} onCRUD={handleCRUD} />
       )),
     [items, type, handleCRUD]
   );
@@ -50,9 +52,9 @@ const List = ({ items, type }) => {
   );
 };
 
-List.propTypes = {
+CardList.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   type: PropTypes.oneOf(['artist', 'song', 'album', 'admin']).isRequired,
 };
 
-export default React.memo(List);
+export default React.memo(CardList);

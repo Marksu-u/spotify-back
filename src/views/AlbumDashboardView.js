@@ -20,7 +20,7 @@ const AlbumDashboardView = () => {
             artist: album.artist.name,
             date: album.releaseDate,
             genre: album.genre.join(', '),
-            image: convertBufferToImageUrl(album.picture[0].data.data),
+            image: convertBufferToImageUrl(album.picture[0]),
           };
         });
         setAlbums(transformedAlbums);
