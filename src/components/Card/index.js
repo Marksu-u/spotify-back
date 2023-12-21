@@ -8,25 +8,54 @@ const Card = ({ type, data, onClick, onCRUD }) => {
     switch (type) {
       /* ------ ARTISTE ------ */
       case 'artist':
-        return <div>Infos Artiste: </div>;
+        return (
+          <div>
+            <div>{data.name}</div>
+          </div>
+        );
 
       /* ------ AUDIO ------ */
       case 'song':
-        const imageSrc = convertBufferToImageUrl(data.image);
         return (
-          <div>
-            <div>Titre de la chanson : {data.title}</div>
-            <div>Artiste : {data.artist}</div>
-            <div>Album : {data.album}</div>
-            <div>Date : {data.date}</div>
-            <div>Genre : {data.genre}</div>
-            <img src={imageSrc} alt={data.album} />
+          <div className="card">
+            <div className="card-image">
+              <img src={data.image} alt={data.album} />
+            </div>
+            <div className="card-content">
+              <div className="card-title">{data.title}</div>
+              <div className="card-details">
+                <div>
+                  {data.artist} - {data.album}
+                </div>
+                <div>{data.date}</div>
+              </div>
+              <div className="card-genre">
+                <div>{data.genre}</div>
+              </div>
+            </div>
           </div>
         );
 
       /* ------ ALBUM ------ */
       case 'album':
-        return <div>Infos Album: </div>;
+        return (
+          <div className="card">
+            <div className="card-image">
+              <img src={data.image} alt={data.title} />
+            </div>
+            <div className="card-content">
+              <div className="card-title">{data.title}</div>
+              <div className="card-details">
+                <div>
+                  {data.artist} {data.date}
+                </div>
+              </div>
+              <div className="card-genre">
+                <div>Genre : {data.genre}</div>
+              </div>
+            </div>
+          </div>
+        );
 
       /* ------ ADMIN ------ */
       case 'admin':
@@ -38,28 +67,16 @@ const Card = ({ type, data, onClick, onCRUD }) => {
     }
   };
 
-  const convertBufferToImageUrl = (picture) => {
-    let imageSrc = '';
-    if (picture && picture.length > 0) {
-      const blob = new Blob([new Uint8Array(picture)], {
-        type: 'image/jpeg',
-      });
-      imageSrc = URL.createObjectURL(blob);
-    }
-    return imageSrc;
-  };
-
   const renderCRUDButtons = () => (
     <div>
-      <Button onClick={() => onCRUD('read')}>Lire</Button>
-      <Button onClick={() => onCRUD('update')}>Mettre à jour</Button>
-      <Button onClick={() => onCRUD('delete')}>Supprimer</Button>
+      <Button label="Lire" onClick={() => onCRUD('read', data)} />
+      <Button label="Modifier" onClick={() => onCRUD('update', data)} />
+      <Button label="Supprimer" onClick={() => onCRUD('delete', data)} />
     </div>
   );
 
   return (
     <div className="card" onClick={onClick}>
-      <div className="card-title"></div>
       {renderContent()}
       {renderCRUDButtons()}
     </div>
@@ -68,7 +85,7 @@ const Card = ({ type, data, onClick, onCRUD }) => {
 
 Card.propTypes = {
   type: PropTypes.oneOf(['artist', 'song', 'album', 'admin']),
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   image: PropTypes.string,
   data: PropTypes.any,
   onClick: PropTypes.func,
