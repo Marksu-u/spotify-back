@@ -1,51 +1,47 @@
-import React, { useState, useEffect, lazy } from 'react';
-import './index.css';
-import notFound from '../assets/404.png';
-import { notificationService } from '../services/notificationService';
+import React, { useState, useEffect } from 'react';
+import CardList from '../components/CardList';
+import Card from '../components/Card';
 import { apiService } from '../services/apiService';
-
-const CardList = lazy(() => import('../components/CardList'));
+import './AudioDashboardView.css';
 
 const AlbumDashboardView = () => {
-  const [albums, setAlbums] = useState([]);
+  const [audios, setAudios] = useState([]);
 
   useEffect(() => {
-    const fetchAlbums = async () => {
+    const fetchAudios = async () => {
       try {
-        const fetchedAlbums = await apiService.getAlbums();
-        const transformedAlbums = fetchedAlbums.map((album) => {
-          return {
-            id: album._id,
-            title: album.title,
-            artist: album.artist.name,
-            date: album.releaseDate,
-            genre: album.genre.join(', '),
-            image: convertBufferToImageUrl(album.picture[0].data.data),
-          };
-        });
-        setAlbums(transformedAlbums);
+        const fetchedAudios = await apiService.getAudios();
+        setAudios(
+          fetchedAudios.map((audio) => ({
+            id: audio._id,
+            title: audio.filename,
+            artist: audio.metadata.artist.name,
+            album: audio.metadata.album.title,
+            date: audio.metadata.date,
+            genre: audio.metadata.genre.join(', '),
+            image: convertBufferToImageUrl(audio.metadata.picture),
+          }))
+        );
       } catch (error) {
         console.error(error);
       }
     };
-    fetchAlbums();
+
+    fetchAudios();
   }, []);
 
-  const convertBufferToImageUrl = (picture) => {
-    if (picture && picture.data && picture.data.data) {
-      const buffer = new Uint8Array(picture.data.data);
-      const blob = new Blob([buffer], { type: picture.format });
-      return URL.createObjectURL(blob);
+  const convertBufferToImageUrl = (pictureData) => {
+    let imageSrc = '';
+    if (pictureData && pictureData.length > 0) {
+      const blob = new Blob([new Uint8Array(pictureData)], {
+        type: 'image/jpeg',
+      });
+      imageSrc = URL.createObjectURL(blob);
     }
-    return notFound;
+    return imageSrc;
   };
 
-  return (
-    <div className="dashboard-list-view">
-      <h2>Albums Dashboard</h2>
-      <CardList items={albums} type="album" />
-    </div>
-  );
+  return <div className="audio-dashboard-view">ALBUM</div>;
 };
 
 export default AlbumDashboardView;

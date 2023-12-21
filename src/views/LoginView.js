@@ -17,12 +17,13 @@ const LoginView = () => {
       );
       if (response.token) {
         dispatch({ type: 'LOGIN', payload: response.token });
-        navigate('/dashboard');
+        navigate('/dashboard'); // Redirection après connexion réussie
       } else {
-        // Gérer l'absence de token ou d'erreur mais je sais pas comment
+        // Gérer l'absence de token ou d'erreur
       }
     } catch (error) {
       console.error('Erreur de connexion', error);
+      // Afficher une notification d'erreur à l'utilisateur
     }
   };
 
@@ -41,4 +42,4 @@ const LoginView = () => {
   );
 };
 
-export default React.memo(LoginView);
+export default LoginView;

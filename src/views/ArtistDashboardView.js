@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import CardList from '../components/CardList';
+import Card from '../components/Card';
 import { apiService } from '../services/apiService';
-import './index.css';
+import './AudioDashboardView.css';
 
 const ArtistDashboardView = () => {
-  const [artists, setArtists] = useState([]);
+  const [audios, setAudios] = useState([]);
 
   useEffect(() => {
-    const fetchArtists = async () => {
+    const fetchAudios = async () => {
       try {
-        const fetchedArtists = await apiService.getArtists();
-        setArtists(
-          fetchedArtists.map((artist) => ({
-            id: artist._id,
-            name: artist.name,
+        const fetchedAudios = await apiService.getAudios();
+        setAudios(
+          fetchedAudios.map((audio) => ({
+            id: audio._id,
+            title: audio.filename,
+            artist: audio.metadata.artist.name,
+            album: audio.metadata.album.title,
+            date: audio.metadata.date,
+            genre: audio.metadata.genre.join(', '),
+            image: convertBufferToImageUrl(audio.metadata.picture),
           }))
         );
       } catch (error) {
@@ -21,15 +27,21 @@ const ArtistDashboardView = () => {
       }
     };
 
-    fetchArtists();
+    fetchAudios();
   }, []);
 
-  return (
-    <div className="dashboard-list-view ">
-      <h2>Artist Dashboard</h2>
-      <CardList items={artists} type="artist" />
-    </div>
-  );
+  const convertBufferToImageUrl = (pictureData) => {
+    let imageSrc = '';
+    if (pictureData && pictureData.length > 0) {
+      const blob = new Blob([new Uint8Array(pictureData)], {
+        type: 'image/jpeg',
+      });
+      imageSrc = URL.createObjectURL(blob);
+    }
+    return imageSrc;
+  };
+
+  return <div className="audio-dashboard-view">Artiste</div>;
 };
 
 export default ArtistDashboardView;

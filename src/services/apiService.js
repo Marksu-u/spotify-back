@@ -31,7 +31,7 @@ const uploadAudio = async (audioFile) => {
   const formData = new FormData();
   formData.append('audioFile', audioFile);
 
-  const response = await fetch(`${API_URL}audio/upload`, {
+  const response = await fetch(`${API_URL}/audio/upload`, {
     method: 'POST',
     body: formData,
   });
@@ -62,20 +62,20 @@ const getStreamingCount = async (id) => {
 
 /* ------------- ARTIST ------------- */
 const getArtists = async () => {
-  const response = await fetch(`${API_URL}artist/`);
+  const response = await fetch(`${API_URL}/artist/`);
   if (!response.ok) throw new Error('Erreur lors du chargement des artistes');
   return await response.json();
 };
 
 const getSingleArtist = async (id) => {
-  const response = await fetch(`${API_URL}artist/${id}`);
+  const response = await fetch(`${API_URL}/artist/${id}`);
   if (!response.ok)
     throw new Error('Erreur lors de la récupération de l’artiste');
   return await response.json();
 };
 
 const editArtist = async (id, artistData) => {
-  const response = await fetch(`${API_URL}artist/${id}`, {
+  const response = await fetch(`${API_URL}/artist/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ const editArtist = async (id, artistData) => {
 };
 
 const createArtist = async (artistData) => {
-  const response = await fetch(`${API_URL}artist`, {
+  const response = await fetch(`${API_URL}/artist`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ const createArtist = async (artistData) => {
 };
 
 const deleteArtist = async (id) => {
-  const response = await fetch(`${API_URL}artist/${id}`, {
+  const response = await fetch(`${API_URL}/artist/${id}`, {
     method: 'DELETE',
   });
   if (!response.ok)
@@ -110,20 +110,20 @@ const deleteArtist = async (id) => {
 
 /* ------------- ALBUM ------------- */
 const getAlbums = async () => {
-  const response = await fetch(`${API_URL}album`);
+  const response = await fetch(`${API_URL}/album`);
   if (!response.ok) throw new Error('Erreur lors du chargement des albums');
   return await response.json();
 };
 
 const getSingleAlbum = async (id) => {
-  const response = await fetch(`${API_URL}album/${id}`);
+  const response = await fetch(`${API_URL}/album/${id}`);
   if (!response.ok)
     throw new Error('Erreur lors de la récupération de l’album');
   return await response.json();
 };
 
 const createAlbum = async (albumData) => {
-  const response = await fetch(`${API_URL}album`, {
+  const response = await fetch(`${API_URL}/album`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ const createAlbum = async (albumData) => {
 };
 
 const editAlbum = async (id, albumData) => {
-  const response = await fetch(`${API_URL}album/${id}`, {
+  const response = await fetch(`${API_URL}/album/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ const editAlbum = async (id, albumData) => {
 };
 
 const deleteAlbum = async (id) => {
-  const response = await fetch(`${API_URL}album/${id}`, {
+  const response = await fetch(`${API_URL}/album/${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) throw new Error('Erreur lors de la suppression de l’album');
