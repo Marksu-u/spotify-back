@@ -4,7 +4,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: ['prettier'], // Supprimez 'plugin:react/recommended' si c'est redondant
+  extends: ['plugin:react/recommended', 'prettier'],
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -12,9 +12,9 @@ module.exports = {
     ecmaVersion: 13,
     sourceType: 'module',
   },
-  plugins: ['prettier'], // Supprimez 'react' si c'est redondant
+  plugins: ['react', 'prettier'],
   rules: {
     'prettier/prettier': 'error',
-    'react/react-in-jsx-scope': 'off', // Gardez cette règle si nécessaire
+    'react/react-in-jsx-scope': 'off',
   },
 };
