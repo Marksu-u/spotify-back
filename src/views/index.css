@@ -70,11 +70,6 @@
   }
   
 /* -------- DASBOARD -------- */
-  .dashboard-list-view {
-    background-color: #121212;
-    color: #fff;
-  }
-  
   .dashboard-list-view h2 {
     color: #1DB954;
     margin-bottom: 20px;

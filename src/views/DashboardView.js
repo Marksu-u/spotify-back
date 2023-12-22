@@ -45,7 +45,7 @@ const DashboardView = () => {
           <LogoutComponent />
         </div>
       </div>
-      <div className="dashboard-content">
+      <div>
         <Suspense fallback={<div>Chargement...</div>}>
           <Routes>
             <Route path="audio" element={<AudioDashboard />} />
