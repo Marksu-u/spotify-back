@@ -1,30 +1,40 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, lazy, memo } from 'react';
 import PropTypes from 'prop-types';
-import Card from '../Card';
 import { apiService } from '../../services/apiService';
 
+const Card = lazy(() => import('../Card'));
+const Modal = lazy(() => import('../CardList'));
+const PageControls = lazy(() => import('../PageControls'));
+
+const ITEMS_PER_PAGE = 5;
+
 const CardList = ({ items, type }) => {
+  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
-  const [audioUrl, setAudioUrl] = useState(''); // Nouvel état pour l'URL audio
+
+  const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
+
+  const currentItems = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    return items.slice(start, end);
+  }, [currentPage, items]);
 
   const handleCRUD = useCallback(async (action, itemData) => {
     setCurrentItem(itemData);
 
     switch (action) {
-      case 'read':
-        try {
-          // const streamedAudio = await apiService.streamAudio(itemData.id);
-          console.log(itemData.id);
-        } catch (error) {
-          console.error('Erreur lors du streaming de l’audio', error);
-        }
-        break;
       case 'update':
-        // Logique pour la mise à jour
+        setModalOpen(true);
         break;
       case 'delete':
-        // Logique pour la suppression
+        console.log(itemData.id);
+        try {
+          const deletedAudio = await apiService.deleteAudio(itemData.id);
+        } catch (error) {
+          console.error(error);
+        }
         break;
       default:
         console.log('Action inconnue');
@@ -33,21 +43,51 @@ const CardList = ({ items, type }) => {
 
   const renderListItems = useMemo(
     () =>
-      items.map((item) => (
+      currentItems.map((item) => (
         <Card key={item.id} data={item} type={type} onCRUD={handleCRUD} />
       )),
-    [items, type, handleCRUD]
+    [currentItems, type, handleCRUD]
   );
+
+  const goToPreviousPage = () =>
+    setCurrentPage((page) => Math.max(page - 1, 1));
+  const goToNextPage = () =>
+    setCurrentPage((page) => Math.min(page + 1, totalPages));
 
   const handleModalClose = useCallback(() => {
     setModalOpen(false);
     setCurrentItem(null);
   }, []);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // edit à faire
+    setModalOpen(false);
+  };
+
   return (
     <div>
-      {audioUrl && <audio src={audioUrl} controls autoPlay />}
+      <PageControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPrevious={goToPreviousPage}
+        onNext={goToNextPage}
+      />
       {renderListItems}
+      <PageControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPrevious={goToPreviousPage}
+        onNext={goToNextPage}
+      />
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          data={currentItem}
+          onSubmit={handleSubmit}
+        />
+      )}
     </div>
   );
 };
@@ -57,4 +97,4 @@ CardList.propTypes = {
   type: PropTypes.oneOf(['artist', 'song', 'album', 'admin']).isRequired,
 };
 
-export default React.memo(CardList);
+export default memo(CardList);

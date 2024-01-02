@@ -38,3 +38,10 @@
   font-size: 14px;
   opacity: 0.8;
 }
+
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}

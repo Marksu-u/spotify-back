@@ -1,7 +1,7 @@
-import React, { Suspense, lazy, useCallback, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useState, memo } from 'react';
 import './index.css';
-import { notificationService } from '../services/notificationService';
 import { apiService } from '../services/apiService';
+import { notificationService } from '../services/notificationService';
 
 const CardList = lazy(() => import('../components/CardList'));
 
@@ -12,6 +12,7 @@ const AudioDashboardView = () => {
     const fetchAudios = async () => {
       try {
         const fetchedAudios = await apiService.getAudios();
+        console.log(fetchedAudios);
         const transformedAudios = fetchedAudios.map((audio) => {
           return {
             id: audio._id,
@@ -28,8 +29,9 @@ const AudioDashboardView = () => {
         console.error(error);
       }
     };
-    notificationService.notify('Audios chargés avec succès', 'success');
+    console.log(1);
     fetchAudios();
+    notificationService.notify('Audios chargés avec succès', 'success');
   }, []);
 
   const convertBufferToImageUrl = (picture) => {
@@ -51,4 +53,4 @@ const AudioDashboardView = () => {
   );
 };
 
-export default React.memo(AudioDashboardView);
+export default AudioDashboardView;

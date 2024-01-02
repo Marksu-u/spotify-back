@@ -68,8 +68,7 @@ const Card = ({ type, data, onClick, onCRUD }) => {
   };
 
   const renderCRUDButtons = () => (
-    <div>
-      <Button label="Lire" onClick={() => onCRUD('read', data)} />
+    <div className="button-container">
       <Button label="Modifier" onClick={() => onCRUD('update', data)} />
       <Button label="Supprimer" onClick={() => onCRUD('delete', data)} />
     </div>
