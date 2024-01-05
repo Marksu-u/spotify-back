@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Form from '../components/Form';
 import authService from '../services/authService';
 import AuthContext from '../context/authContext';
+import { notificationService } from '../services/notificationService';
 import './LoginView.css';
 
 const LoginView = () => {
@@ -23,6 +24,7 @@ const LoginView = () => {
       }
     } catch (error) {
       console.error('Erreur de connexion', error);
+      notificationService.notify('Erreur vérifier vos identifiants', 'error');
     }
   };
 

@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+// Search.js
+import React, { useState, lazy, memo } from 'react';
+import PropTypes from 'prop-types';
 
-const Input = lazy(() => import('../components/Input'));
-const Button = lazy(() => import('../components/Button'));
+const Input = lazy(() => import('../Input'));
 
-const Search = () => {
+const Search = ({ onSearchChange }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearchInputChange = (e) => {
     setSearchQuery(e.target.value);
-  };
-
-  const handleSearch = () => {
-    console.log('Recherche effectuée :', searchQuery);
+    onSearchChange(e.target.value);
   };
 
   return (
@@ -22,9 +20,12 @@ const Search = () => {
         value={searchQuery}
         onChange={handleSearchInputChange}
       />
-      <Button onClick={handleSearch}>Rechercher</Button>
     </div>
   );
 };
 
-export default React.memo(Search);
+Search.propTypes = {
+  onSearchChange: PropTypes.func.isRequired,
+};
+
+export default memo(Search);

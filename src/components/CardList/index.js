@@ -5,21 +5,27 @@ import { apiService } from '../../services/apiService';
 const Card = lazy(() => import('../Card'));
 const Modal = lazy(() => import('../CardList'));
 const PageControls = lazy(() => import('../PageControls'));
+const Search = lazy(() => import('../Search'));
 
 const ITEMS_PER_PAGE = 5;
 
 const CardList = ({ items, type }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
 
-  const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
+  const filteredItems = useMemo(() => {
+    return items.filter((item) =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [items, searchQuery]);
 
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
   const currentItems = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    const end = start + ITEMS_PER_PAGE;
-    return items.slice(start, end);
-  }, [currentPage, items]);
+    return filteredItems.slice(start, start + ITEMS_PER_PAGE);
+  }, [currentPage, filteredItems]);
 
   const handleCRUD = useCallback(async (action, itemData) => {
     setCurrentItem(itemData);
@@ -54,6 +60,11 @@ const CardList = ({ items, type }) => {
   const goToNextPage = () =>
     setCurrentPage((page) => Math.min(page + 1, totalPages));
 
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1); // Réinitialise la pagination à la première page lors de la recherche
+  };
+
   const handleModalClose = useCallback(() => {
     setModalOpen(false);
     setCurrentItem(null);
@@ -67,6 +78,9 @@ const CardList = ({ items, type }) => {
 
   return (
     <div>
+      <div>
+        <Search onSearchChange={handleSearchChange} />
+      </div>
       <PageControls
         currentPage={currentPage}
         totalPages={totalPages}
