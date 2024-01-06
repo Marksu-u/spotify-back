@@ -1,4 +1,3 @@
-// Search.js
 import React, { useState, lazy, memo } from 'react';
 import PropTypes from 'prop-types';
 
@@ -19,6 +18,7 @@ const Search = ({ onSearchChange }) => {
         placeholder="Rechercher..."
         value={searchQuery}
         onChange={handleSearchInputChange}
+        name="search"
       />
     </div>
   );

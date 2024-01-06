@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import CardList from '../components/CardList';
+import React, { useState, useEffect, lazy } from 'react';
 import { apiService } from '../services/apiService';
+import { notificationService } from '../services/notificationService';
 import './index.css';
+
+const CardList = lazy(() => import('../components/CardList'));
 
 const ArtistDashboardView = () => {
   const [artists, setArtists] = useState([]);
@@ -20,8 +22,8 @@ const ArtistDashboardView = () => {
         console.error(error);
       }
     };
-
     fetchArtists();
+    notificationService.notify('Audios chargés avec succès', 'success');
   }, []);
 
   return (

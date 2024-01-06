@@ -62,7 +62,7 @@ const CardList = ({ items, type }) => {
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);
-    setCurrentPage(1); // Réinitialise la pagination à la première page lors de la recherche
+    setCurrentPage(1);
   };
 
   const handleModalClose = useCallback(() => {

@@ -1,6 +1,5 @@
 import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import Button from '../components/Button';
 import LogoutComponent from '../components/Logout';
 import Logo from '../logo.png';

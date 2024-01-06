@@ -1,8 +1,8 @@
 import React, { useState, useEffect, lazy } from 'react';
-import './index.css';
 import notFound from '../assets/404.png';
 import { notificationService } from '../services/notificationService';
 import { apiService } from '../services/apiService';
+import './index.css';
 
 const CardList = lazy(() => import('../components/CardList'));
 
@@ -29,6 +29,7 @@ const AlbumDashboardView = () => {
       }
     };
     fetchAlbums();
+    notificationService.notify('Albums chargés avec succès', 'success');
   }, []);
 
   const convertBufferToImageUrl = (picture) => {

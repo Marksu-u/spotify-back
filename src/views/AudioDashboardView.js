@@ -29,7 +29,6 @@ const AudioDashboardView = () => {
         console.error(error);
       }
     };
-    console.log(1);
     fetchAudios();
     notificationService.notify('Audios chargés avec succès', 'success');
   }, []);
