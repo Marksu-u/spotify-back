@@ -10,7 +10,7 @@ const Card = ({ type, data, onClick, onCRUD }) => {
       case 'artist':
         return (
           <div>
-            <div>{data.name}</div>
+            <div>{data.title}</div>
           </div>
         );
 

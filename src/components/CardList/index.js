@@ -16,9 +16,18 @@ const CardList = ({ items, type }) => {
   const [currentItem, setCurrentItem] = useState(null);
 
   const filteredItems = useMemo(() => {
-    return items.filter((item) =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    return items.filter((item) => {
+      // Vérifiez si la propriété 'title' existe et correspond à la requête de recherche.
+      const titleMatch = item.title
+        ? item.title.toLowerCase().includes(searchQuery.toLowerCase())
+        : false;
+      // Vérifiez si la propriété 'name' existe et correspond à la requête de recherche.
+      const artistMatch = item.artist
+        ? item.artist.toLowerCase().includes(searchQuery.toLowerCase())
+        : false;
+      // Retournez true si l'un des deux correspond à la recherche.
+      return titleMatch || artistMatch;
+    });
   }, [items, searchQuery]);
 
   const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);

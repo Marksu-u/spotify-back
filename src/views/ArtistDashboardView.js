@@ -15,7 +15,7 @@ const ArtistDashboardView = () => {
         setArtists(
           fetchedArtists.map((artist) => ({
             id: artist._id,
-            name: artist.name,
+            title: artist.name,
           }))
         );
       } catch (error) {
