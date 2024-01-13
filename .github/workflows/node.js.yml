@@ -1,66 +1,46 @@
-name: Node.js CI
+name: React App CI/CD
 
 on:
-  push:
-    branches: ['build']
   pull_request:
-    branches: ['build']
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    branches:
+      - build
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
-
-    env:
-      REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
-      REACT_APP_VERSION: ${{ secrets.REACT_APP_VERSION }}
-
     steps:
-      - name: Clean npm cache
-        run: npm cache clean --force
-
-      - name: Use Node.js 20
+      - uses: actions/checkout@v3
+      - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: '16' # Use the Node.js version that matches your development environment
 
-      - name: Installing NPM packages
+      - name: Install Dependencies
         run: npm install
 
-      - name: Building project
+      - name: Build
         run: npm run build
 
-      - name: Running tests
-        run: npm run test
-
-      - name: Uploading production-ready build files
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: production-files
-          path: ./build
+          name: build-artifacts
+          path: build/
 
   deploy:
-    name: Deploy
     needs: build
     runs-on: ubuntu-latest
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
-      - name: Downloading artifact
+      - name: Download Artifacts
         uses: actions/download-artifact@v2
         with:
-          name: production-files
-          path: ./build
+          name: build-artifacts
+          path: build
 
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v3
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.YOUR_GITHUB_TOKEN_SECRET }}
+          publish_dir: ./build
+          publish_branch: build
+          keep_files: true # Set this to false to clean existing files on the branch
