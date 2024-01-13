@@ -2,12 +2,9 @@ import React, { useState, useMemo, lazy, memo, Suspense } from 'react';
 import PropTypes from 'prop-types';
 
 import Loader from '../Loader';
-import Card from '../Card';
-import PageControls from '../PageControls';
-import Search from '../Search';
-// const Card = lazy(() => import('../Card'));
-// const PageControls = lazy(() => import('../PageControls'));
-// const Search = lazy(() => import('../Search'));
+const Card = lazy(() => import('../Card'));
+const PageControls = lazy(() => import('../PageControls'));
+const Search = lazy(() => import('../Search'));
 
 const ITEMS_PER_PAGE = 4;
 
@@ -36,9 +33,9 @@ const CardList = ({ items, type }) => {
   const renderListItems = useMemo(
     () =>
       currentItems.map((item) => (
-        // <Suspense key={item.id} fallback={<Loader />}>
-        <Card data={item} type={type} />
-        // </Suspense>
+        <Suspense key={item.id} fallback={<Loader />}>
+          <Card data={item} type={type} />
+        </Suspense>
       )),
     [currentItems, type]
   );
