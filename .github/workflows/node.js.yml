@@ -1,26 +1,38 @@
-name: Build & deploy
+name: Node.js CI
 
 on:
   push:
-    branches:
-      - build
+    branches: ['build']
   pull_request:
-    branches:
-      - build
+    branches: ['build']
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel in-progress: false
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    env:
+      REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+      REACT_APP_VERSION: ${{ secrets.REACT_APP_VERSION }}
 
-      - name: Installing Node.js
-        uses: actions/setup-node@v1
+    steps:
+      - name: Clean npm cache
+        run: npm cache clean --force
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 20
+          cache: 'npm'
 
       - name: Installing NPM packages
         run: npm install
@@ -40,7 +52,11 @@ jobs:
   deploy:
     name: Deploy
     needs: build
-    runs-on: ubuntu-latests
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Downloading artifact
@@ -49,8 +65,6 @@ jobs:
           name: production-files
           path: ./build
 
-      - name: Deploying to gh-pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v3
