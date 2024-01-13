@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Form from '../components/Form';
 import authService from '../services/authService';
@@ -20,7 +20,8 @@ const LoginView = () => {
         dispatch({ type: 'LOGIN', payload: response.token });
         navigate('/dashboard');
       } else {
-        // Gérer l'absence de token ou d'erreur mais je sais pas comment
+        console.error('Token not received in the response');
+        notificationService.notify('Erreur: le token est manquant', 'error');
       }
     } catch (error) {
       console.error('Erreur de connexion', error);

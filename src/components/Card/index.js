@@ -1,16 +1,45 @@
-import React from 'react';
+import React, { useState, useCallback, lazy, memo } from 'react';
 import PropTypes from 'prop-types';
-import Button from '../Button';
+
+const Button = lazy(() => import('../Button'));
+const Modal = lazy(() => import('../Modal'));
+
 import './index.css';
 
-const Card = ({ type, data, onClick, onCRUD }) => {
+const Card = ({ type, data, onClick }) => {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [currentData, setCurrentData] = useState(null);
+  const [actionType, setActionType] = useState(null);
+
+  const handleCRUD = (action) => {
+    setCurrentData(data);
+    setModalOpen(true);
+    setActionType(action);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setCurrentData(null);
+    setActionType(null);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle the submit logic
+    setModalOpen(false);
+    // Reset actionType when form is submitted
+    setActionType(null);
+  };
+
   const renderContent = () => {
     switch (type) {
       /* ------ ARTISTE ------ */
       case 'artist':
         return (
-          <div>
-            <div>{data.title}</div>
+          <div className="card">
+            <div className="card-content">
+              <div className="card-details">{data.title}</div>
+            </div>
           </div>
         );
 
@@ -59,7 +88,16 @@ const Card = ({ type, data, onClick, onCRUD }) => {
 
       /* ------ ADMIN ------ */
       case 'admin':
-        return <div>Admin Controls</div>;
+        return (
+          <div className="card">
+            <div className="card-content">
+              <div className="card-title">{data.title}</div>
+              <div className="card-details">
+                <div>{data.artist}</div>
+              </div>
+            </div>
+          </div>
+        );
 
       /* ------ DEFAULT ------ */
       default:
@@ -69,8 +107,8 @@ const Card = ({ type, data, onClick, onCRUD }) => {
 
   const renderCRUDButtons = () => (
     <div className="button-container">
-      <Button label="Modifier" onClick={() => onCRUD('update', data)} />
-      <Button label="Supprimer" onClick={() => onCRUD('delete', data)} />
+      <Button label="Modifier" onClick={() => handleCRUD('update')} />
+      <Button label="Supprimer" onClick={() => handleCRUD('delete')} />
     </div>
   );
 
@@ -78,6 +116,16 @@ const Card = ({ type, data, onClick, onCRUD }) => {
     <div className="card" onClick={onClick}>
       {renderContent()}
       {renderCRUDButtons()}
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          data={currentData}
+          onSubmit={handleSubmit}
+          actionType={actionType}
+          type={type}
+        />
+      )}
     </div>
   );
 };
@@ -88,13 +136,11 @@ Card.propTypes = {
   image: PropTypes.string,
   data: PropTypes.any,
   onClick: PropTypes.func,
-  onCRUD: PropTypes.func,
 };
 
 Card.defaultProps = {
   type: 'default',
   onClick: () => {},
-  onCRUD: () => {},
 };
 
 export default Card;

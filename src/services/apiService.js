@@ -156,19 +156,8 @@ const deleteAlbum = async (id) => {
 };
 
 /* ------------- ADMIN ------------- */
-const loginAdmin = async (credentials) => {
-  const response = await fetch(`${API_URL}admin/log`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(credentials),
-  });
-  if (!response.ok) throw new Error('Erreur lors de la connexion');
-  return await response.json();
-};
-
-const getAdmins = async (token) => {
+const getAdmins = async () => {
+  const token = localStorage.getItem('userToken');
   const response = await fetch(`${API_URL}admin/`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -256,7 +245,6 @@ export const apiService = {
   createAlbum,
   deleteAlbum,
   /* ------------- ADMIN ------------- */
-  loginAdmin,
   getAdmins,
   getSingleAdmin,
   addAdmin,

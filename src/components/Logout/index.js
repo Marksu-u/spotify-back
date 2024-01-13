@@ -7,7 +7,7 @@ const LogoutComponent = () => {
   const { dispatch } = useContext(AuthContext);
 
   const handleLogout = () => {
-    localStorage.removeItem('userToken');
+    localStorage.removeItem('adminToken');
     dispatch({ type: 'LOGOUT' });
     navigate('/login');
   };
