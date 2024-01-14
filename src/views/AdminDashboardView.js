@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, lazy } from 'react';
 import { apiService } from '../services/apiService';
 import { notificationService } from '../services/notificationService';
 import './index.css';
@@ -45,6 +45,8 @@ const AdminManagementView = () => {
   return (
     <div className="dashboard-list-view">
       <h2>Admin Dashboard</h2>
+      {isLoading && <Loader />}
+
       <CardList items={admins} type="admin" />
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { lazy, useEffect, useState, Suspense } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { apiService } from '../services/apiService';
 import { notificationService } from '../services/notificationService';
 import './index.css';
