@@ -7,7 +7,7 @@ const Input = lazy(() => import('../Input'));
 const Button = lazy(() => import('../Button'));
 const Select = lazy(() => import('../Select'));
 
-const Modal = ({ isOpen, onClose, data, onSubmit, type }) => {
+const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
   const [formData, setFormData] = useState(data);
   const [artists, setArtists] = useState([]);
   const [albums, setAlbums] = useState([]);
@@ -15,8 +15,6 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type }) => {
   useEffect(() => {
     setFormData(data);
   }, [data]);
-
-  console.log(formData);
 
   useEffect(() => {
     const fetchAlbums = async () => {
@@ -36,12 +34,13 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type }) => {
     const fetchArtists = async () => {
       try {
         const fetchedArtists = await apiService.getArtists();
-        setArtists(
-          fetchedArtists.map((artist) => ({
+        const transformedArtists = fetchedArtists.map((artist) => {
+          return {
             id: artist._id,
             title: artist.name,
-          }))
-        );
+          };
+        });
+        setArtists(transformedArtists);
       } catch (error) {
         console.error(error);
       }
@@ -60,8 +59,14 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
-    onClose();
+    console.log('Soumission du formulaire avec les données :', formData);
+    onSubmit(formData, actionType, type)
+      .then(() => {
+        onClose();
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la soumission :', error);
+      });
   };
 
   const renderContent = () => {
@@ -71,7 +76,7 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type }) => {
           <>
             <Input
               label="Artist Name"
-              name="name"
+              name="title"
               value={formData.title || ''}
               onChange={handleChange}
             />
@@ -166,6 +171,7 @@ Modal.propTypes = {
   data: PropTypes.object.isRequired,
   onSubmit: PropTypes.func.isRequired,
   type: PropTypes.oneOf(['artist', 'song', 'album']).isRequired,
+  actionType: PropTypes.oneOf(['update', 'delete']).isRequired,
 };
 
 export default memo(Modal);

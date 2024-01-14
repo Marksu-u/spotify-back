@@ -135,6 +135,7 @@ const createAlbum = async (albumData) => {
 };
 
 const editAlbum = async (id, albumData) => {
+  console.log(albumData);
   const response = await fetch(`${API_URL}album/${id}`, {
     method: 'PUT',
     headers: {
@@ -170,7 +171,8 @@ const getAdmins = async () => {
   return await response.json();
 };
 
-const getSingleAdmin = async (id, token) => {
+const getSingleAdmin = async (id) => {
+  const token = localStorage.getItem('userToken');
   const response = await fetch(`${API_URL}admin/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -183,7 +185,8 @@ const getSingleAdmin = async (id, token) => {
   return await response.json();
 };
 
-const addAdmin = async (adminData, token) => {
+const addAdmin = async (adminData) => {
+  const token = localStorage.getItem('userToken');
   const response = await fetch(`${API_URL}admin`, {
     method: 'POST',
     headers: {
@@ -197,7 +200,8 @@ const addAdmin = async (adminData, token) => {
   return await response.json();
 };
 
-const updateAdmin = async (id, adminData, token) => {
+const editAdmin = async (id, adminData) => {
+  const token = localStorage.getItem('userToken');
   const response = await fetch(`${API_URL}admin/${id}`, {
     method: 'PUT',
     headers: {
@@ -211,7 +215,8 @@ const updateAdmin = async (id, adminData, token) => {
   return await response.json();
 };
 
-const deleteAdmin = async (id, token) => {
+const deleteAdmin = async (id) => {
+  const token = localStorage.getItem('userToken');
   const response = await fetch(`${API_URL}admin/${id}`, {
     method: 'DELETE',
     headers: {
@@ -248,6 +253,6 @@ export const apiService = {
   getAdmins,
   getSingleAdmin,
   addAdmin,
-  updateAdmin,
+  editAdmin,
   deleteAdmin,
 };

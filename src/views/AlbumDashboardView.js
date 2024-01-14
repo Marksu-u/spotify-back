@@ -28,7 +28,6 @@ const AlbumDashboardView = () => {
           };
         });
         setAlbums(transformedAlbums);
-        console.log('ALBUMS :', albums);
       } catch (error) {
         console.error(error);
       } finally {
