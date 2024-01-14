@@ -1,4 +1,4 @@
-import React, { useState, useCallback, lazy, memo } from 'react';
+import React, { useState, lazy } from 'react';
 import PropTypes from 'prop-types';
 import { apiService } from '../../services/apiService';
 import { notificationService } from '../../services/notificationService';
