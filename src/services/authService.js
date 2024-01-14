@@ -4,6 +4,7 @@ import { notificationService } from './notificationService';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+/*
 const login = async (username, password) => {
   const response = await axios.post(`${API_URL}admin/log`, {
     username,
@@ -14,6 +15,24 @@ const login = async (username, password) => {
     notificationService.notify('Connecté(e) !', 'success');
   }
   return response.data;
+};
+*/
+
+const login = async (username, password) => {
+  const data = {
+    username: username,
+    password: password,
+  };
+
+  const response = await fetch(`${API_URL}admin/log`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Erreur, vérifiez vos identifiants');
+  return await response.json();
 };
 
 const logout = () => {
