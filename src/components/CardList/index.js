@@ -1,4 +1,4 @@
-import React, { useState, useMemo, lazy, memo, Suspense } from 'react';
+import React, { useState, useMemo, lazy, Suspense } from 'react';
 import PropTypes from 'prop-types';
 
 import Loader from '../Loader';
