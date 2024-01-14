@@ -1,0 +1,42 @@
+.select-group {
+    margin-bottom: 15px;
+  }
+  
+  .select-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #1db954; /* Couleur verte typique de Spotify */
+  }
+  
+  .select-group select {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    appearance: none;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .select-group select:focus {
+    outline: none;
+    border-color: #1db954;
+  }
+  
+  .select-group select::-ms-expand {
+    display: none;
+  }
+  
+  .select-group::after {
+    content: '\25BC';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #333;
+  }
+  
