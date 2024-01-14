@@ -10,9 +10,6 @@ const LoginView = () => {
   const navigate = useNavigate();
   const { dispatch } = useContext(AuthContext);
 
-  const env = process.env.REACT_APP_API_URL;
-  console.log(env);
-
   const handleLogin = async (formData) => {
     try {
       const response = await authService.login(
@@ -40,7 +37,7 @@ const LoginView = () => {
   return (
     <div className="login-view">
       <div className="login-container">
-        <h1>- BackOffice {process.env.REACT_APP_VERSION} -</h1>
+        <h1>BackOffice v.{process.env.REACT_APP_VERSION}</h1>
         <Form fields={loginFields} onSubmit={handleLogin} submitLabel="Login" />
       </div>
     </div>

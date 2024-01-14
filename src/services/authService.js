@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { notificationService } from './notificationService';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
