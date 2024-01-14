@@ -26,6 +26,12 @@ jobs:
       - run: npm run build --if-present
       - run: npm test
 
+      - name: Set REACT_APP_API_URL
+        run: echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" >> $GITHUB_WORKSPACE/.env.local
+
+      - name: Set REACT_APP_VERSION
+        run: echo "REACT_APP_VERSION=${{ secrets.REACT_APP_VERSION }}" >> $GITHUB_WORKSPACE/.env.local
+
       - name: Deploy with gh-pages
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
