@@ -3,35 +3,29 @@ import { jwtDecode } from 'jwt-decode';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-/*
 const login = async (username, password) => {
-  const response = await axios.post(`${API_URL}admin/log`, {
-    username,
-    password,
-  });
-  if (response.data.token) {
-    localStorage.setItem('userToken', response.data.token);
-    notificationService.notify('Connecté(e) !', 'success');
+  try {
+    const response = await axios.post(
+      `${API_URL}admin/log`,
+      {
+        username,
+        password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+
+    if (response.data.token) {
+      localStorage.setItem('userToken', response.data.token);
+      notificationService.notify('Connecté(e) !', 'success');
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la requête de connexion :', error);
+    throw error;
   }
-  return response.data;
-};
-*/
-
-const login = async (username, password) => {
-  const data = {
-    username: username,
-    password: password,
-  };
-
-  const response = await fetch(`${API_URL}admin/log`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) throw new Error('Erreur, vérifiez vos identifiants');
-  return await response.json();
 };
 
 const logout = () => {
