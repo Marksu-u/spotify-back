@@ -59,7 +59,6 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Soumission du formulaire avec les données :', formData);
     onSubmit(formData, actionType, type)
       .then(() => {
         onClose();

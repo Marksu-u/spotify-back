@@ -135,7 +135,6 @@ const createAlbum = async (albumData) => {
 };
 
 const editAlbum = async (id, albumData) => {
-  console.log(albumData);
   const response = await fetch(`${API_URL}album/${id}`, {
     method: 'PUT',
     headers: {

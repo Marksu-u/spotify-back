@@ -30,9 +30,6 @@ const Card = ({ type, data, onClick }) => {
 
   const onSubmit = async (updatedData, actionType, type) => {
     try {
-      console.log('Card data :', updatedData);
-      console.log('Type Action :', actionType);
-      console.log('Type :', type);
       if (actionType === 'update') {
         switch (type) {
           case 'artist':
