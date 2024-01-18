@@ -1,8 +1,11 @@
 import React, { useState, useMemo, lazy, Suspense } from 'react';
+import { notificationService } from '../../services/notificationService';
+import { apiService } from '../../services/apiService';
 import PropTypes from 'prop-types';
 
 import Loader from '../Loader';
 const Card = lazy(() => import('../Card'));
+const CardAdd = lazy(() => import('../CardAdd'));
 const PageControls = lazy(() => import('../PageControls'));
 const Search = lazy(() => import('../Search'));
 
@@ -50,6 +53,24 @@ const CardList = ({ items, type }) => {
     setCurrentPage(1);
   };
 
+  const handleAddItem = async (newData, type) => {
+    try {
+      console.log(newData);
+      switch (type) {
+        case 'artist':
+          await apiService.createArtist(newData);
+          break;
+        case 'song':
+          break;
+        case 'album':
+          break;
+      }
+      notificationService.notify('Ajout réussie', 'success');
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de l'élément :", error);
+    }
+  };
+
   return (
     <div>
       <div>
@@ -62,6 +83,7 @@ const CardList = ({ items, type }) => {
         onNext={goToNextPage}
       />
       {renderListItems}
+      <CardAdd type={type} onAdd={handleAddItem} />
       <PageControls
         currentPage={currentPage}
         totalPages={totalPages}

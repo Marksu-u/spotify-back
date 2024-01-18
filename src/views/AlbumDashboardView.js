@@ -6,28 +6,31 @@ import './index.css';
 
 import Loader from '../components/Loader';
 const CardList = lazy(() => import('../components/CardList'));
+const Button = lazy(() => import('../components/Button'));
 
 const AlbumDashboardView = () => {
   const [albums, setAlbums] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [itemsPerPage, setItemsPerPage] = useState(16);
 
   useEffect(() => {
     const fetchAlbums = async () => {
+      setIsLoading(true);
       try {
-        setIsLoading(true);
-        const fetchedAlbums = await apiService.getAlbums();
-        const transformedAlbums = fetchedAlbums.map((album) => {
-          return {
-            id: album._id,
-            title: album.title,
-            artist: album.artist.name,
-            artistId: album.artist._id,
-            date: album.releaseDate,
-            genre: album.genre.join(', '),
-            image: convertBufferToImageUrl(album.picture[0]),
-          };
-        });
-        setAlbums(transformedAlbums);
+        const fetchedAlbums = await apiService.getAlbums(
+          currentPage,
+          itemsPerPage
+        );
+        if (fetchedAlbums.length > 0) {
+          setAlbums((prevAlbums) => [
+            ...prevAlbums,
+            ...fetchedAlbums.map(transformAlbums),
+          ]);
+        }
+        notificationService.notify('Albums chargés avec succès', 'success');
+        setHasMore(fetchedAlbums.length === itemsPerPage);
       } catch (error) {
         console.error(error);
       } finally {
@@ -35,31 +38,43 @@ const AlbumDashboardView = () => {
       }
     };
     fetchAlbums();
-    notificationService.notify('Albums chargés avec succès', 'success');
-  }, []);
+  }, [currentPage, itemsPerPage]);
+
+  const transformAlbums = (album) => ({
+    id: album._id,
+    title: album.title,
+    artist: album.artist.name,
+    artistId: album.artist._id,
+    date: album.releaseDate,
+    genre: album.genre.join(', '),
+    image: convertBufferToImageUrl(album.picture[0]),
+  });
 
   const convertBufferToImageUrl = (picture) => {
-    if (picture && picture.data && picture.data.data) {
+    if (picture?.data?.data) {
       const buffer = new Uint8Array(picture.data.data);
-      const blob = new Blob([buffer], { type: picture.format });
-      return URL.createObjectURL(blob);
+      return URL.createObjectURL(new Blob([buffer], { type: picture.format }));
     }
     return notFound;
   };
 
-  if (isLoading) {
-    return (
-      <div className="dashboard-list-view">
-        <h2>Albums Dashboard</h2>
-        <Loader />
-      </div>
-    );
-  }
+  const loadMoreAlbums = () => {
+    if (hasMore) {
+      setCurrentPage((current) => current + 1);
+    }
+  };
 
   return (
     <div className="dashboard-list-view">
       <h2>Albums Dashboard</h2>
-      <CardList items={albums} type="album" />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          {hasMore && <Button label="Charger plus" onClick={loadMoreAlbums} />}
+          <CardList items={albums} type="album" />
+        </>
+      )}
     </div>
   );
 };

@@ -13,8 +13,12 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
   const [albums, setAlbums] = useState([]);
 
   useEffect(() => {
-    setFormData(data);
-  }, [data]);
+    if (actionType === 'add') {
+      setFormData({});
+    } else {
+      setFormData(data);
+    }
+  }, [data, actionType]);
 
   useEffect(() => {
     const fetchAlbums = async () => {
@@ -54,6 +58,14 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+  };
+
+  const handleChangeFile = (e) => {
+    const { name, files } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: files[0],
     }));
   };
 
@@ -103,6 +115,12 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
               value={formData.genre || ''}
               onChange={handleChange}
             />
+            <Input
+              type="file"
+              label="Album Image"
+              name="albumImage"
+              onChange={handleChangeFile}
+            />
           </>
         );
       case 'song':
@@ -128,6 +146,14 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
               value={formData.albumId || ''}
               onChange={handleChange}
             />
+            {actionType === 'add' && (
+              <Input
+                type="file"
+                label="Audio File"
+                name="audioFile"
+                onChange={handleChangeFile}
+              />
+            )}
           </>
         );
       case 'admin':
@@ -167,10 +193,10 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
 Modal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  data: PropTypes.object.isRequired,
+  data: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,
   type: PropTypes.oneOf(['artist', 'song', 'album']).isRequired,
-  actionType: PropTypes.oneOf(['update', 'delete']).isRequired,
+  actionType: PropTypes.oneOf(['update', 'delete', 'add']).isRequired,
 };
 
 export default memo(Modal);

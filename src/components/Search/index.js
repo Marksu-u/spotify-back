@@ -15,10 +15,10 @@ const Search = ({ onSearchChange }) => {
     <div>
       <Input
         type="text"
-        placeholder="Rechercher..."
         value={searchQuery}
         onChange={handleSearchInputChange}
         name="search"
+        placeholder="Rechercher..."
       />
     </div>
   );

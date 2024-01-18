@@ -1,8 +1,9 @@
 const API_URL = process.env.REACT_APP_API_URL;
 
 /* ------------- AUDIO ------------- */
-const getAudios = async () => {
-  const response = await fetch(`${API_URL}audio`);
+const getAudios = async (page, limit) => {
+  const url = `${API_URL}audio?page=${page}&limit=${limit}`;
+  const response = await fetch(url);
   if (!response.ok) throw new Error('Erreur lors du chargement des audios');
   return await response.json();
 };
@@ -61,8 +62,8 @@ const getStreamingCount = async (id) => {
 };
 
 /* ------------- ARTIST ------------- */
-const getArtists = async () => {
-  const response = await fetch(`${API_URL}artist/`);
+const getArtists = async (page, limit) => {
+  const response = await fetch(`${API_URL}artist/?page=${page}&limit=${limit}`);
   if (!response.ok) throw new Error('Erreur lors du chargement des artistes');
   return await response.json();
 };
@@ -109,8 +110,8 @@ const deleteArtist = async (id) => {
 };
 
 /* ------------- ALBUM ------------- */
-const getAlbums = async () => {
-  const response = await fetch(`${API_URL}album`);
+const getAlbums = async (page, limit) => {
+  const response = await fetch(`${API_URL}album/?page=${page}&limit=${limit}`);
   if (!response.ok) throw new Error('Erreur lors du chargement des albums');
   return await response.json();
 };
@@ -156,9 +157,9 @@ const deleteAlbum = async (id) => {
 };
 
 /* ------------- ADMIN ------------- */
-const getAdmins = async () => {
+const getAdmins = async (page, limit) => {
   const token = localStorage.getItem('userToken');
-  const response = await fetch(`${API_URL}admin/`, {
+  const response = await fetch(`${API_URL}admin/?page=${page}&limit=${limit}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
