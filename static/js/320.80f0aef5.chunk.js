@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkspotify_back=self.webpackChunkspotify_back||[]).push([[320],{320:(e,a,t)=>{t.r(a),t.d(a,{default:()=>h});var r=t(791),s=t(184);const c=(0,r.lazy)((()=>Promise.resolve().then(t.bind(t,437)))),n=e=>{let{onSearchChange:a}=e;const[t,n]=(0,r.useState)("");return(0,s.jsx)("div",{children:(0,s.jsx)(c,{type:"text",value:t,onChange:e=>{n(e.target.value),a(e.target.value)},name:"search",placeholder:"Rechercher..."})})},h=(0,r.memo)(n)}}]);
+//# sourceMappingURL=320.80f0aef5.chunk.js.map
