@@ -4,7 +4,7 @@ export const notificationService = {
   notify: (message, type = 'info', options = {}) => {
     const defaultOptions = {
       position: 'top-right',
-      autoClose: 2000,
+      autoClose: 500,
     };
 
     const mergedOptions = { ...defaultOptions, ...options };

@@ -2,23 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './index.css';
 
-const Input = ({
-  label,
-  type = 'text',
-  value,
-  onChange,
-  name,
-  placehodler,
-}) => (
+const Input = ({ label, type = 'text', name, id, ...rest }) => (
   <div className="input-group">
-    {label && <label className="input-label">{label}</label>}
+    {label && (
+      <label htmlFor={id || name} className="input-label">
+        {label}
+      </label>
+    )}
     <input
       type={type}
-      className="input-field"
-      placehodler={placehodler}
-      value={value}
-      onChange={onChange}
       name={name}
+      id={id || name}
+      className="input-field"
+      {...rest}
     />
   </div>
 );
@@ -26,10 +22,8 @@ const Input = ({
 Input.propTypes = {
   label: PropTypes.string,
   type: PropTypes.string,
-  placehodler: PropTypes.string,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
+  id: PropTypes.string,
 };
 
 export default React.memo(Input);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy } from 'react';
+import React, { useState, useEffect, useCallback, lazy } from 'react';
 import notFound from '../assets/404.png';
 import { notificationService } from '../services/notificationService';
 import { apiService } from '../services/apiService';
@@ -8,6 +8,24 @@ import Loader from '../components/Loader';
 const CardList = lazy(() => import('../components/CardList'));
 const Button = lazy(() => import('../components/Button'));
 
+const transformAlbums = (album) => ({
+  id: album._id,
+  title: album.title,
+  artist: album.artist.name,
+  artistId: album.artist._id,
+  date: new Date(album.releaseDate).getFullYear(),
+  genre: album.genre.join(', '),
+  image: convertBufferToImageUrl(album.picture[0]),
+});
+
+const convertBufferToImageUrl = (picture) => {
+  if (picture?.data?.data) {
+    const buffer = new Uint8Array(picture.data.data);
+    return URL.createObjectURL(new Blob([buffer], { type: picture.format }));
+  }
+  return notFound;
+};
+
 const AlbumDashboardView = () => {
   const [albums, setAlbums] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,48 +33,31 @@ const AlbumDashboardView = () => {
   const [hasMore, setHasMore] = useState(true);
   const [itemsPerPage, setItemsPerPage] = useState(16);
 
-  useEffect(() => {
-    const fetchAlbums = async () => {
-      setIsLoading(true);
-      try {
-        const fetchedAlbums = await apiService.getAlbums(
-          currentPage,
-          itemsPerPage
-        );
-        if (fetchedAlbums.length > 0) {
-          setAlbums((prevAlbums) => [
-            ...prevAlbums,
-            ...fetchedAlbums.map(transformAlbums),
-          ]);
-        }
-        notificationService.notify('Albums chargés avec succès', 'success');
-        setHasMore(fetchedAlbums.length === itemsPerPage);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
+  const fetchAlbums = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const fetchedAlbums = await apiService.getAlbums(
+        currentPage,
+        itemsPerPage
+      );
+      if (fetchedAlbums.length > 0) {
+        setAlbums((prevAlbums) => [
+          ...prevAlbums,
+          ...fetchedAlbums.map(transformAlbums),
+        ]);
       }
-    };
-    fetchAlbums();
+      notificationService.notify('Albums chargés avec succès', 'success');
+      setHasMore(fetchedAlbums.length === itemsPerPage);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [currentPage, itemsPerPage]);
 
-  const transformAlbums = (album) => ({
-    id: album._id,
-    title: album.title,
-    artist: album.artist.name,
-    artistId: album.artist._id,
-    date: album.releaseDate,
-    genre: album.genre.join(', '),
-    image: convertBufferToImageUrl(album.picture[0]),
-  });
-
-  const convertBufferToImageUrl = (picture) => {
-    if (picture?.data?.data) {
-      const buffer = new Uint8Array(picture.data.data);
-      return URL.createObjectURL(new Blob([buffer], { type: picture.format }));
-    }
-    return notFound;
-  };
+  useEffect(() => {
+    fetchAlbums();
+  }, [fetchAlbums]);
 
   const loadMoreAlbums = () => {
     if (hasMore) {

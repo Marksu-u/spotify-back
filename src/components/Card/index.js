@@ -12,61 +12,33 @@ const Card = ({ type, data, onClick }) => {
   const [currentData, setCurrentData] = useState(null);
   const [actionType, setActionType] = useState(null);
 
-  const handleCRUD = (actionType) => {
-    setCurrentData(data);
-    setModalOpen(true);
-    setActionType(actionType);
-  };
-
-  const handleModalClose = () => {
-    setModalOpen(false);
-    setCurrentData({});
-  };
-
-  const handleSubmit = async (updatedData, actionType) => {
-    await onSubmit(updatedData, actionType, type);
-    setModalOpen(false);
-  };
-
-  const onSubmit = async (updatedData, actionType, type) => {
+  const handleDelete = async () => {
     try {
-      if (actionType === 'update') {
-        switch (type) {
-          case 'artist':
-            // j'suis claqué j'vois pas pourquoi j'dois faire ça
-            const data = {
-              id: updatedData.id,
-              name: updatedData.title,
-            };
-            await apiService.editArtist(updatedData.id, data);
-            break;
-          case 'song':
-            await apiService.editAudio(updatedData.id, updatedData);
-            break;
-          case 'album':
-            await apiService.editAlbum(updatedData.id, updatedData);
-            break;
-        }
-        notificationService.notify('Mise à jour réussie', 'success');
-      } else if (actionType === 'delete') {
-        switch (type) {
-          case 'artist':
-            await apiService.deleteArtist(updatedData.id);
-            break;
-          case 'song':
-            await apiService.deleteSong(updatedData.id);
-            break;
-          case 'album':
-            await apiService.deleteAlbum(updatedData.id);
-            break;
-        }
-        notificationService.notify('Suppression réussie', 'success');
+      switch (type) {
+        case 'artist':
+          await apiService.deleteArtist(data.id);
+          break;
+        case 'song':
+          await apiService.deleteAudio(data.id);
+          break;
+        case 'album':
+          await apiService.deleteAlbum(data.id);
+          break;
+        case 'admin':
+          await apiService.deleteAdmin(data.id);
+          break;
+        default:
+          throw new Error('Unknown type for deletion');
       }
+      notificationService.notify('Item deleted successfully');
     } catch (error) {
-      console.error("Erreur lors de l'action:", error);
-      notificationService.notify("Erreur lors de l'action", 'error');
+      console.error('Error deleting item:', error);
+      notificationService.notify('Error deleting item', 'error');
     }
-    setModalOpen(false);
+  };
+
+  const handleEdit = () => {
+    onEdit(data);
   };
 
   const renderContent = () => {
@@ -145,8 +117,8 @@ const Card = ({ type, data, onClick }) => {
 
   const renderCRUDButtons = () => (
     <div className="button-container">
-      <Button label="Modifier" onClick={() => handleCRUD('update')} />
-      <Button label="Supprimer" onClick={() => handleCRUD('delete')} />
+      <Button label="Modifier" onClick={handleEdit} />
+      <Button label="Supprimer" onClick={handleDelete} />
     </div>
   );
 
@@ -154,16 +126,6 @@ const Card = ({ type, data, onClick }) => {
     <div className="card" onClick={onClick}>
       {renderContent()}
       {renderCRUDButtons()}
-      {isModalOpen && (
-        <Modal
-          isOpen={isModalOpen}
-          onClose={handleModalClose}
-          data={currentData}
-          onSubmit={handleSubmit}
-          actionType={actionType}
-          type={type}
-        />
-      )}
     </div>
   );
 };

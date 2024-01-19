@@ -34,12 +34,13 @@ const CardList = ({ items, type }) => {
   }, [currentPage, filteredItems]);
 
   const renderListItems = useMemo(
-    () =>
-      currentItems.map((item) => (
-        <Suspense key={item.id} fallback={<Loader />}>
-          <Card data={item} type={type} />
-        </Suspense>
-      )),
+    () => (
+      <Suspense fallback={<Loader />}>
+        {currentItems.map((item) => (
+          <Card key={item.id} data={item} type={type} />
+        ))}
+      </Suspense>
+    ),
     [currentItems, type]
   );
 
@@ -55,14 +56,18 @@ const CardList = ({ items, type }) => {
 
   const handleAddItem = async (newData, type) => {
     try {
-      console.log(newData);
       switch (type) {
         case 'artist':
           await apiService.createArtist(newData);
           break;
         case 'song':
+          await apiService.uploadAudio(newData);
           break;
         case 'album':
+          await apiService.createAlbum(newData);
+          break;
+        case 'admin':
+          await apiService.addAdmin(newData);
           break;
       }
       notificationService.notify('Ajout réussie', 'success');

@@ -8,22 +8,31 @@ const Button = lazy(() => import('../Button'));
 const Select = lazy(() => import('../Select'));
 
 const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
-  const [formData, setFormData] = useState(data);
+  const [formData, setFormData] = useState(actionType === 'add' ? {} : data);
   const [artists, setArtists] = useState([]);
   const [albums, setAlbums] = useState([]);
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   useEffect(() => {
-    if (actionType === 'add') {
-      setFormData({});
-    } else {
-      setFormData(data);
+    if (actionType !== 'add' && data) {
+      setFormData({
+        ...data,
+        releaseDate: formatDate(data.releaseDate),
+      });
     }
   }, [data, actionType]);
 
   useEffect(() => {
     const fetchAlbums = async () => {
       try {
-        const fetchedAlbums = await apiService.getAlbums();
+        const fetchedAlbums = await apiService.getAllAlbums();
         const transformedAlbums = fetchedAlbums.map((album) => {
           return {
             id: album._id,
@@ -37,7 +46,7 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
     };
     const fetchArtists = async () => {
       try {
-        const fetchedArtists = await apiService.getArtists();
+        const fetchedArtists = await apiService.getAllArtists();
         const transformedArtists = fetchedArtists.map((artist) => {
           return {
             id: artist._id,
@@ -54,33 +63,40 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleChangeFile = (e) => {
     const { name, files } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: files[0],
-    }));
+    if (files && files[0]) {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: files[0],
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: null,
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData, actionType, type)
-      .then(() => {
-        onClose();
-      })
-      .catch((error) => {
-        console.error('Erreur lors de la soumission :', error);
-      });
+    onSubmit(formData);
   };
 
   const renderContent = () => {
+    if (actionType === 'delete') {
+      return (
+        <>
+          <p>Êtes-vous sûr de vouloir supprimer cet élément ?</p>
+        </>
+      );
+    }
     switch (type) {
       case 'artist':
         return (
@@ -97,16 +113,31 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
         return (
           <>
             <Input
-              label="Album Title"
+              label="Titre"
               name="title"
               value={formData.title || ''}
               onChange={handleChange}
+              required
             />
             <Select
-              label="Artist"
+              label="Artiste"
               name="artistId"
-              options={artists}
+              options={[{ id: '', title: 'Sélectionner...' }, ...artists]}
               value={formData.artistId || ''}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              type="file"
+              label="Couverture"
+              name="picture"
+              onChange={handleChangeFile}
+            />
+            <Input
+              type="date"
+              label="Date de sortie"
+              name="releaseDate"
+              value={formData.releaseDate || ''}
               onChange={handleChange}
             />
             <Input
@@ -114,12 +145,6 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
               name="genre"
               value={formData.genre || ''}
               onChange={handleChange}
-            />
-            <Input
-              type="file"
-              label="Album Image"
-              name="albumImage"
-              onChange={handleChangeFile}
             />
           </>
         );
@@ -135,14 +160,14 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
             <Select
               label="Artist"
               name="artistId"
-              options={artists}
+              options={[{ id: '', title: 'Sélectionner...' }, ...artists]}
               value={formData.artistId || ''}
               onChange={handleChange}
             />
             <Select
               label="Album"
               name="albumId"
-              options={albums}
+              options={[{ id: '', title: 'Sélectionner...' }, ...albums]}
               value={formData.albumId || ''}
               onChange={handleChange}
             />
@@ -166,6 +191,13 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
               value={formData.artist || ''}
               onChange={handleChange}
             />
+            <Input
+              type="text"
+              label="Username"
+              name="email"
+              value={formData.title || ''}
+              onChange={handleChange}
+            />
           </>
         );
       default:
@@ -176,7 +208,7 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
   if (!isOpen) return null;
 
   return (
-    <Suspense fallback={<div>Chargement des audios...</div>}>
+    <Suspense fallback={<div>Chargement...</div>}>
       <div className="modal-backdrop">
         <div className="modal-content">
           <form onSubmit={handleSubmit}>

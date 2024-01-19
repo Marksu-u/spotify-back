@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import './index.css';
 
 const Button = lazy(() => import('../Button'));
-const Modal = lazy(() => import('../Modal'));
+const ModalAdd = lazy(() => import('../Modal'));
 
 const CardAdd = ({ type, onAdd }) => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -24,10 +24,10 @@ const CardAdd = ({ type, onAdd }) => {
   };
 
   return (
-    <div className="card-add">
+    <div className="card">
       <Button label={`Ajouter ${type}`} onClick={handleAdd} />
       {isModalOpen && (
-        <Modal
+        <ModalAdd
           isOpen={isModalOpen}
           onClose={handleModalClose}
           data={newData}

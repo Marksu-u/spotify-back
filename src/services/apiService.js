@@ -68,6 +68,12 @@ const getArtists = async (page, limit) => {
   return await response.json();
 };
 
+const getAllArtists = async () => {
+  const response = await fetch(`${API_URL}artist/all`);
+  if (!response.ok) throw new Error('Erreur lors du chargement des artistes');
+  return await response.json();
+};
+
 const getSingleArtist = async (id) => {
   const response = await fetch(`${API_URL}artist/${id}`);
   if (!response.ok)
@@ -116,6 +122,11 @@ const getAlbums = async (page, limit) => {
   return await response.json();
 };
 
+const getAllAlbums = async () => {
+  const response = await fetch(`${API_URL}album/all`);
+  if (!response.ok) throw new Error('Erreur lors du chargement des albums');
+  return await response.json();
+};
 const getSingleAlbum = async (id) => {
   const response = await fetch(`${API_URL}album/${id}`);
   if (!response.ok)
@@ -124,25 +135,40 @@ const getSingleAlbum = async (id) => {
 };
 
 const createAlbum = async (albumData) => {
+  formData.append('title', albumData.title);
+  formData.append('artist', albumData.artistId);
+  formData.append('releaseDate', albumData.releaseDate);
+  formData.append('genre', JSON.stringify(albumData.genre));
+
+  if (albumData.picture) {
+    formData.append('albumImage', albumData.picture);
+  }
+
   const response = await fetch(`${API_URL}album`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(albumData),
+    body: formData,
   });
+
   if (!response.ok) throw new Error('Erreur lors de la création de l’album');
   return await response.json();
 };
 
 const editAlbum = async (id, albumData) => {
+  const formData = new FormData();
+  formData.append('title', albumData.title);
+  formData.append('artist', albumData.artistId);
+  formData.append('releaseDate', albumData.releaseDate);
+  formData.append('genre', albumData.genre);
+
+  if (albumData.picture && albumData.picture instanceof File) {
+    formData.append('albumImage', albumData.picture);
+  }
+
   const response = await fetch(`${API_URL}album/${id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(albumData),
+    body: formData,
   });
+
   if (!response.ok)
     throw new Error('Erreur lors de la modification de l’album');
   return await response.json();
@@ -239,12 +265,14 @@ export const apiService = {
   getStreamingCount,
   /* ------------- ARTIST ------------- */
   getArtists,
+  getAllArtists,
   getSingleArtist,
   editArtist,
   createArtist,
   deleteArtist,
   /* ------------- ALBUM ------------- */
   getAlbums,
+  getAllAlbums,
   getSingleAlbum,
   editAlbum,
   createAlbum,
