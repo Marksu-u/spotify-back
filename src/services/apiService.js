@@ -72,16 +72,16 @@ const getStreamingCount = async (id) => {
 };
 
 /* ------------- ARTIST ------------- */
-const getArtists = async (page, limit) => {
+const getArtists = async () => {
   const response = await fetch(`${API_URL}artist`);
   if (!response.ok) throw new Error('Erreur lors du chargement des artistes');
   return await response.json();
 };
 
-const getAllArtists = async () => {
-  const response = await fetch(`${API_URL}artist/all`);
-  if (!response.ok) throw new Error('Erreur lors du chargement des artistes');
-  return await response.json();
+export const getLastArtist = async () => {
+  const response = await fetch(`${API_URL}artist/last`);
+  const data = await response.json();
+  return data;
 };
 
 const getSingleArtist = async (id) => {
@@ -286,7 +286,7 @@ export const apiService = {
   getStreamingCount,
   /* ------------- ARTIST ------------- */
   getArtists,
-  getAllArtists,
+  getLastArtist,
   getSingleArtist,
   editArtist,
   createArtist,

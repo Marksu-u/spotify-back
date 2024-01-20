@@ -1,6 +1,7 @@
 import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { notificationService } from '../../services/notificationService';
 import { apiService } from '../../services/apiService';
+import { addArtist } from '../../services/indexerDBService';
 import PropTypes from 'prop-types';
 
 import Loader from '../Loader';
@@ -56,9 +57,20 @@ const CardList = ({ items, type }) => {
 
   const handleAddItem = async (newData, type) => {
     try {
+      console.log('newData :', newData);
       switch (type) {
         case 'artist':
           await apiService.createArtist(newData);
+          const newArtist = await apiService.getLastArtist();
+          console.log('Objet retourné par getLastArtist:', newArtist);
+
+          const artistToAdd = { id: newArtist._id, title: newArtist.name };
+          console.log('Objet à ajouter dans IndexedDB:', artistToAdd);
+
+          delete artistToAdd._id;
+
+          console.log('last add', artistToAdd);
+          await addArtist(artistToAdd);
           break;
         case 'song':
           await apiService.uploadAudio(newData);

@@ -15,10 +15,7 @@ const AdminManagementView = () => {
     const fecthAdmins = async () => {
       setIsLoading(true);
       try {
-        const fecthedAdmins = await apiService.getAdmins(
-          currentPage,
-          itemsPerPage
-        );
+        const fecthedAdmins = await apiService.getAdmins();
         setAdmins((prevAdmins) => [
           ...prevAdmins,
           ...fecthedAdmins.map(transformAdmins),

@@ -27,54 +27,53 @@ const Card = ({ type, data, onClick }) => {
   };
 
   const handleAction = async (actionType, editedData) => {
-    if (actionType === 'delete') {
-      try {
-        switch (type) {
-          case 'artist':
-            await apiService.deleteArtist(data.id);
-            break;
-          case 'song':
-            await apiService.deleteAudio(data.id);
-            break;
-          case 'album':
-            await apiService.deleteAlbum(data.id);
-            break;
-          case 'admin':
-            await apiService.deleteAdmin(data.id);
-            break;
-          default:
-            throw new Error('Unknown type for deletion');
-        }
-        notificationService.notify('Item deleted successfully');
-      } catch (error) {
-        console.error('Error deleting item:', error);
-        notificationService.notify('Error deleting item', 'error');
+    const actionMap = {
+      delete: {
+        artist: 'deleteArtist',
+        song: 'deleteAudio',
+        album: 'deleteAlbum',
+        admin: 'deleteAdmin',
+      },
+      update: {
+        artist: 'editArtist',
+        song: 'editAudio',
+        album: 'editAlbum',
+        admin: 'editAdmin',
+      },
+    };
+
+    const performAction = async (type, data) => {
+      const actionFunction = actionMap[actionType][type];
+      if (!actionFunction) {
+        throw new Error(`Unknown type for ${actionType}`);
       }
-    } else {
-      try {
-        console.log('editData :', editedData);
-        switch (type) {
-          case 'artist':
-            await apiService.editArtist(editedData);
-            break;
-          case 'song':
-            await apiService.editAudio(editedData);
-            break;
-          case 'album':
-            await apiService.editAlbum(editedData);
-            break;
-          case 'admin':
-            await apiService.editAdmin(editedData);
-            break;
-          default:
-            throw new Error('Unknown type for deletion');
-        }
-        notificationService.notify('Enregistré!', 'success');
+      return await apiService[actionFunction](data);
+    };
+
+    try {
+      const data = actionType === 'delete' ? editedData.id : editedData;
+      console.log(`${actionType === 'delete' ? 'Delete' : 'Edit'}: `, data);
+
+      await performAction(type, data);
+      notificationService.notify(
+        `${
+          actionType === 'delete' ? 'Item deleted' : 'Enregistré!'
+        } successfully`,
+        'success'
+      );
+
+      if (actionType !== 'delete') {
         setModalOpen(false);
-      } catch (error) {
-        console.error('Error updating item:', error);
-        notificationService.notify('Error updating item', 'error');
       }
+    } catch (error) {
+      console.error(
+        `Error ${actionType === 'delete' ? 'deleting' : 'updating'} item:`,
+        error
+      );
+      notificationService.notify(
+        `Error ${actionType === 'delete' ? 'deleting' : 'updating'} item`,
+        'error'
+      );
     }
   };
 

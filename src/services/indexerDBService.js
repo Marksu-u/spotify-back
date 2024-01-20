@@ -75,6 +75,13 @@ export const getArtists = async () => {
   });
 };
 
+export const addArtist = async (artist) => {
+  const db = await openDatabase();
+  const transaction = db.transaction('artists', 'readwrite');
+  const store = transaction.objectStore('artists');
+  store.add(artist);
+};
+
 export const saveAlbums = async (albums) => {
   const db = await openDatabase();
   const transaction = db.transaction('albums', 'readwrite');
