@@ -13,7 +13,7 @@ const login = async (username, password) => {
         password,
       },
       {
-        withCredentials: false,
+        withCredentials: true,
       }
     );
 
