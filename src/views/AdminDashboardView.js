@@ -10,9 +10,6 @@ const Button = lazy(() => import('../components/Button'));
 const AdminManagementView = () => {
   const [admins, setAdmins] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [itemsPerPage, setItemsPerPage] = useState(16);
 
   useEffect(() => {
     const fecthAdmins = async () => {
@@ -22,16 +19,10 @@ const AdminManagementView = () => {
           currentPage,
           itemsPerPage
         );
-        if (fecthedAdmins.length > 0) {
-          setAdmins((prevAdmins) => [
-            ...prevAdmins,
-            ...fecthedAdmins.map(transformAdmins),
-          ]);
-          notify('Admin chargé', 'success');
-          setHasMore(fecthedAdmins.length === itemsPerPage);
-        } else {
-          setHasMore(false);
-        }
+        setAdmins((prevAdmins) => [
+          ...prevAdmins,
+          ...fecthedAdmins.map(transformAdmins),
+        ]);
       } catch (error) {
         console.error(error);
       } finally {
@@ -41,12 +32,6 @@ const AdminManagementView = () => {
     fecthAdmins();
     notificationService.notify('Admins chargés avec succès', 'success');
   }, []);
-
-  const loadMoreAdmins = () => {
-    if (hasMore) {
-      setCurrentPage((current) => current + 1);
-    }
-  };
 
   const transformAdmins = (admin) => ({
     id: admin._id,
@@ -61,7 +46,6 @@ const AdminManagementView = () => {
         <Loader />
       ) : (
         <>
-          {hasMore && <Button label="Charger plus" onClick={loadMoreAdmins} />}
           <CardList items={admins} type="admin" />
         </>
       )}

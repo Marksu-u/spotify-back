@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useCallback, lazy } from 'react';
 import notFound from '../assets/404.png';
 import { notificationService } from '../services/notificationService';
+import {
+  saveAlbums,
+  getAlbums,
+  getArtists,
+} from '../services/indexerDBService';
 import { apiService } from '../services/apiService';
 import './index.css';
 
@@ -8,20 +13,22 @@ import Loader from '../components/Loader';
 const CardList = lazy(() => import('../components/CardList'));
 const Button = lazy(() => import('../components/Button'));
 
-const transformAlbums = (album) => ({
+const transformAlbums = async (album) => ({
   id: album._id,
   title: album.title,
   artist: album.artist.name,
   artistId: album.artist._id,
-  date: new Date(album.releaseDate).getFullYear(),
+  date: album.releaseDate,
   genre: album.genre.join(', '),
-  image: convertBufferToImageUrl(album.picture[0]),
+  image: convertBufferToBase64(album.picture[0]),
 });
 
-const convertBufferToImageUrl = (picture) => {
+const convertBufferToBase64 = (picture) => {
   if (picture?.data?.data) {
     const buffer = new Uint8Array(picture.data.data);
-    return URL.createObjectURL(new Blob([buffer], { type: picture.format }));
+    let binary = '';
+    buffer.forEach((b) => (binary += String.fromCharCode(b)));
+    return `data:${picture.format};base64,${window.btoa(binary)}`;
   }
   return notFound;
 };
@@ -29,41 +36,33 @@ const convertBufferToImageUrl = (picture) => {
 const AlbumDashboardView = () => {
   const [albums, setAlbums] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [itemsPerPage, setItemsPerPage] = useState(16);
-
-  const fetchAlbums = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const fetchedAlbums = await apiService.getAlbums(
-        currentPage,
-        itemsPerPage
-      );
-      if (fetchedAlbums.length > 0) {
-        setAlbums((prevAlbums) => [
-          ...prevAlbums,
-          ...fetchedAlbums.map(transformAlbums),
-        ]);
-      }
-      notificationService.notify('Albums chargés avec succès', 'success');
-      setHasMore(fetchedAlbums.length === itemsPerPage);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentPage, itemsPerPage]);
 
   useEffect(() => {
-    fetchAlbums();
-  }, [fetchAlbums]);
+    const fetchAlbums = async () => {
+      setIsLoading(true);
 
-  const loadMoreAlbums = () => {
-    if (hasMore) {
-      setCurrentPage((current) => current + 1);
-    }
-  };
+      try {
+        let albumData = await getAlbums();
+
+        if (!albumData.length) {
+          const fetchedAlbums = await apiService.getAlbums();
+          const transformedAlbums = await Promise.all(
+            fetchedAlbums.map(transformAlbums)
+          );
+          await saveAlbums(transformedAlbums);
+          albumData = transformedAlbums;
+        }
+
+        setAlbums(albumData);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAlbums();
+  }, []);
 
   return (
     <div className="dashboard-list-view">
@@ -72,7 +71,6 @@ const AlbumDashboardView = () => {
         <Loader />
       ) : (
         <>
-          {hasMore && <Button label="Charger plus" onClick={loadMoreAlbums} />}
           <CardList items={albums} type="album" />
         </>
       )}

@@ -1,8 +1,8 @@
 const API_URL = process.env.REACT_APP_API_URL;
 
 /* ------------- AUDIO ------------- */
-const getAudios = async (page, limit) => {
-  const url = `${API_URL}audio?page=${page}&limit=${limit}`;
+const getAudios = async () => {
+  const url = `${API_URL}audio`;
   const response = await fetch(url);
   if (!response.ok) throw new Error('Erreur lors du chargement des audios');
   return await response.json();
@@ -16,10 +16,12 @@ const getSingleAudio = async (id) => {
 };
 
 const editAudio = async (id, audioData) => {
+  const token = localStorage.getItem('userToken');
   const response = await fetch(`${API_URL}audio/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(audioData),
   });
@@ -29,11 +31,15 @@ const editAudio = async (id, audioData) => {
 };
 
 const uploadAudio = async (audioFile) => {
+  const token = localStorage.getItem('userToken');
   const formData = new FormData();
   formData.append('audioFile', audioFile);
 
   const response = await fetch(`${API_URL}audio/upload`, {
     method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     body: formData,
   });
   if (!response.ok) throw new Error('Erreur lors de l’upload de l’audio');
@@ -41,8 +47,12 @@ const uploadAudio = async (audioFile) => {
 };
 
 const deleteAudio = async (id) => {
+  const token = localStorage.getItem('userToken');
   const response = await fetch(`${API_URL}audio/${id}`, {
     method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
   if (!response.ok) throw new Error('Erreur lors de la suppression de l’audio');
   return await response.json();
@@ -63,7 +73,7 @@ const getStreamingCount = async (id) => {
 
 /* ------------- ARTIST ------------- */
 const getArtists = async (page, limit) => {
-  const response = await fetch(`${API_URL}artist/?page=${page}&limit=${limit}`);
+  const response = await fetch(`${API_URL}artist`);
   if (!response.ok) throw new Error('Erreur lors du chargement des artistes');
   return await response.json();
 };
@@ -82,11 +92,13 @@ const getSingleArtist = async (id) => {
 };
 
 const editArtist = async (artistData) => {
+  const token = localStorage.getItem('userToken');
   const id = artistData.id;
   const response = await fetch(`${API_URL}artist/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(artistData),
   });
@@ -96,10 +108,12 @@ const editArtist = async (artistData) => {
 };
 
 const createArtist = async (artistData) => {
+  const token = localStorage.getItem('userToken');
   const response = await fetch(`${API_URL}artist`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(artistData),
   });
@@ -108,8 +122,12 @@ const createArtist = async (artistData) => {
 };
 
 const deleteArtist = async (id) => {
+  const token = localStorage.getItem('userToken');
   const response = await fetch(`${API_URL}artist/${id}`, {
     method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
   if (!response.ok)
     throw new Error('Erreur lors de la suppression de l’artiste');
@@ -117,8 +135,8 @@ const deleteArtist = async (id) => {
 };
 
 /* ------------- ALBUM ------------- */
-const getAlbums = async (page, limit) => {
-  const response = await fetch(`${API_URL}album/?page=${page}&limit=${limit}`);
+const getAlbums = async () => {
+  const response = await fetch(`${API_URL}album`);
   if (!response.ok) throw new Error('Erreur lors du chargement des albums');
   return await response.json();
 };
@@ -136,18 +154,13 @@ const getSingleAlbum = async (id) => {
 };
 
 const createAlbum = async (albumData) => {
-  formData.append('title', albumData.title);
-  formData.append('artist', albumData.artistId);
-  formData.append('releaseDate', albumData.releaseDate);
-  formData.append('genre', JSON.stringify(albumData.genre));
-
-  if (albumData.picture) {
-    formData.append('albumImage', albumData.picture);
-  }
-
+  console.log(albumData);
   const response = await fetch(`${API_URL}album`, {
     method: 'POST',
-    body: formData,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: albumData,
   });
 
   if (!response.ok) throw new Error('Erreur lors de la création de l’album');
@@ -167,6 +180,9 @@ const editAlbum = async (id, albumData) => {
 
   const response = await fetch(`${API_URL}album/${id}`, {
     method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     body: formData,
   });
 
@@ -176,17 +192,21 @@ const editAlbum = async (id, albumData) => {
 };
 
 const deleteAlbum = async (id) => {
+  const token = localStorage.getItem('userToken');
   const response = await fetch(`${API_URL}album/${id}`, {
     method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
   if (!response.ok) throw new Error('Erreur lors de la suppression de l’album');
   return await response.json();
 };
 
 /* ------------- ADMIN ------------- */
-const getAdmins = async (page, limit) => {
+const getAdmins = async () => {
   const token = localStorage.getItem('userToken');
-  const response = await fetch(`${API_URL}admin/?page=${page}&limit=${limit}`, {
+  const response = await fetch(`${API_URL}admin`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
