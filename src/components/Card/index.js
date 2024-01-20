@@ -12,33 +12,70 @@ const Card = ({ type, data, onClick }) => {
   const [currentData, setCurrentData] = useState(null);
   const [actionType, setActionType] = useState(null);
 
-  const handleDelete = async () => {
-    try {
-      switch (type) {
-        case 'artist':
-          await apiService.deleteArtist(data.id);
-          break;
-        case 'song':
-          await apiService.deleteAudio(data.id);
-          break;
-        case 'album':
-          await apiService.deleteAlbum(data.id);
-          break;
-        case 'admin':
-          await apiService.deleteAdmin(data.id);
-          break;
-        default:
-          throw new Error('Unknown type for deletion');
-      }
-      notificationService.notify('Item deleted successfully');
-    } catch (error) {
-      console.error('Error deleting item:', error);
-      notificationService.notify('Error deleting item', 'error');
-    }
+  const handleEdit = () => {
+    setModalOpen(true);
+    setCurrentData(data);
+    setActionType('update');
   };
 
-  const handleEdit = () => {
-    onEdit(data);
+  const handleDelete = () => {
+    handleAction('delete', data);
+  };
+
+  const handleSubmit = (editedData) => {
+    handleAction(actionType, { ...data, ...editedData });
+  };
+
+  const handleAction = async (actionType, editedData) => {
+    if (actionType === 'delete') {
+      try {
+        switch (type) {
+          case 'artist':
+            await apiService.deleteArtist(data.id);
+            break;
+          case 'song':
+            await apiService.deleteAudio(data.id);
+            break;
+          case 'album':
+            await apiService.deleteAlbum(data.id);
+            break;
+          case 'admin':
+            await apiService.deleteAdmin(data.id);
+            break;
+          default:
+            throw new Error('Unknown type for deletion');
+        }
+        notificationService.notify('Item deleted successfully');
+      } catch (error) {
+        console.error('Error deleting item:', error);
+        notificationService.notify('Error deleting item', 'error');
+      }
+    } else {
+      try {
+        console.log('editData :', editedData);
+        switch (type) {
+          case 'artist':
+            await apiService.editArtist(editedData);
+            break;
+          case 'song':
+            await apiService.editAudio(editedData);
+            break;
+          case 'album':
+            await apiService.editAlbum(editedData);
+            break;
+          case 'admin':
+            await apiService.editAdmin(editedData);
+            break;
+          default:
+            throw new Error('Unknown type for deletion');
+        }
+        notificationService.notify('Enregistré!', 'success');
+        setModalOpen(false);
+      } catch (error) {
+        console.error('Error updating item:', error);
+        notificationService.notify('Error updating item', 'error');
+      }
+    }
   };
 
   const renderContent = () => {
@@ -126,6 +163,16 @@ const Card = ({ type, data, onClick }) => {
     <div className="card" onClick={onClick}>
       {renderContent()}
       {renderCRUDButtons()}
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setModalOpen(false)}
+          data={currentData}
+          onSubmit={handleSubmit}
+          actionType={actionType}
+          type={type}
+        />
+      )}
     </div>
   );
 };

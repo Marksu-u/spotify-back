@@ -81,7 +81,8 @@ const getSingleArtist = async (id) => {
   return await response.json();
 };
 
-const editArtist = async (id, artistData) => {
+const editArtist = async (artistData) => {
+  const id = artistData.id;
   const response = await fetch(`${API_URL}artist/${id}`, {
     method: 'PUT',
     headers: {

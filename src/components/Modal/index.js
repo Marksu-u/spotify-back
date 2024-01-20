@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { apiService } from '../../services/apiService';
 import './index.css';
 
+import Loader from '../Loader';
 const Input = lazy(() => import('../Input'));
 const Button = lazy(() => import('../Button'));
 const Select = lazy(() => import('../Select'));
@@ -11,23 +12,6 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
   const [formData, setFormData] = useState(actionType === 'add' ? {} : data);
   const [artists, setArtists] = useState([]);
   const [albums, setAlbums] = useState([]);
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
-  useEffect(() => {
-    if (actionType !== 'add' && data) {
-      setFormData({
-        ...data,
-        releaseDate: formatDate(data.releaseDate),
-      });
-    }
-  }, [data, actionType]);
 
   useEffect(() => {
     const fetchAlbums = async () => {
@@ -62,10 +46,18 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
     fetchAlbums();
   }, []);
 
+  useEffect(() => {
+    if (actionType !== 'add') {
+      setFormData(data);
+    }
+  }, [data, actionType]);
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
   };
 
@@ -89,6 +81,10 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
     onSubmit(formData);
   };
 
+  const formatYearToDate = (year) => {
+    return year ? `01-01-${year}` : '';
+  };
+
   const renderContent = () => {
     if (actionType === 'delete') {
       return (
@@ -97,6 +93,7 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
         </>
       );
     }
+    console.log(formData);
     switch (type) {
       case 'artist':
         return (
@@ -134,11 +131,13 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
               onChange={handleChangeFile}
             />
             <Input
-              type="date"
-              label="Date de sortie"
+              type="number"
+              label="Année de sortie"
               name="releaseDate"
               value={formData.releaseDate || ''}
               onChange={handleChange}
+              min="1900"
+              max="2099"
             />
             <Input
               label="Genre"
@@ -186,29 +185,36 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
           <>
             <Input
               type="email"
-              label="Admin email"
-              name="email"
+              label="Email"
+              name="artist"
               value={formData.artist || ''}
               onChange={handleChange}
             />
             <Input
               type="text"
               label="Username"
-              name="email"
+              name="title"
               value={formData.title || ''}
+              onChange={handleChange}
+            />
+            <Input
+              type="text"
+              label="Mot de passe"
+              name="password"
+              value={''}
               onChange={handleChange}
             />
           </>
         );
       default:
-        return <p>Unknown type</p>;
+        return <p>Action impossible</p>;
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <Suspense fallback={<div>Chargement...</div>}>
+    <Suspense fallback={<Loader />}>
       <div className="modal-backdrop">
         <div className="modal-content">
           <form onSubmit={handleSubmit}>
