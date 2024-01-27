@@ -65,8 +65,6 @@ const CardList = ({ items, type }) => {
           const newArtist = await apiService.getLastArtist();
           const artistToAdd = { id: newArtist._id, name: newArtist.title };
           delete artistToAdd._id;
-
-          console.log('last add', artistToAdd);
           await addArtist(artistToAdd);
           break;
         case 'song':
