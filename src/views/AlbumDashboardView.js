@@ -1,26 +1,20 @@
-import React, { useState, useEffect, useCallback, lazy } from 'react';
+import { useState, useEffect, lazy } from 'react';
 import notFound from '../assets/404.png';
-import { notificationService } from '../services/notificationService';
-import {
-  saveAlbums,
-  getAlbums,
-  getArtists,
-} from '../services/indexerDBService';
+import { saveAlbums, getAlbums } from '../services/indexerDBService';
 import { apiService } from '../services/apiService';
 import './index.css';
 
 import Loader from '../components/Loader';
 const CardList = lazy(() => import('../components/CardList'));
-const Button = lazy(() => import('../components/Button'));
 
 const transformAlbums = async (album) => ({
-  id: album._id,
+  _id: album._id,
   title: album.title,
   artist: album.artist.name,
   artistId: album.artist._id,
-  date: album.releaseDate,
+  releaseDate: album.releaseDate,
   genre: album.genre.join(', '),
-  image: convertBufferToBase64(album.picture[0]),
+  picture: convertBufferToBase64(album.picture[0]),
 });
 
 const convertBufferToBase64 = (picture) => {

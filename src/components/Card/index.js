@@ -94,7 +94,7 @@ const Card = ({ type, data, onClick }) => {
         return (
           <div className="card">
             <div className="card-image">
-              <img src={data.image} alt={data.album} />
+              <img src={data.picture} alt={data.album} />
             </div>
             <div className="card-content">
               <div className="card-title">{data.title}</div>
@@ -102,7 +102,7 @@ const Card = ({ type, data, onClick }) => {
                 <div>
                   {data.artist} - {data.album}
                 </div>
-                <div>{data.date}</div>
+                <div>{data.releaseDate}</div>
               </div>
               <div className="card-genre">
                 <div>{data.genre}</div>
@@ -116,7 +116,7 @@ const Card = ({ type, data, onClick }) => {
         return (
           <div className="card">
             <div className="card-image">
-              <img src={data.image} alt={data.title} />
+              <img src={data.picture} alt={data.title} />
             </div>
             <div className="card-content">
               <div className="card-title">{data.title}</div>

@@ -1,12 +1,12 @@
 const openDatabase = () => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('MyDatabase', 1);
+    const request = indexedDB.open('mk-bospot', 1);
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
-      db.createObjectStore('audios', { keyPath: 'id' });
-      db.createObjectStore('artists', { keyPath: 'id' });
-      db.createObjectStore('albums', { keyPath: 'id' });
+      db.createObjectStore('audios', { keyPath: '_id' });
+      db.createObjectStore('artists', { keyPath: '_id' });
+      db.createObjectStore('albums', { keyPath: '_id' });
     };
 
     request.onerror = (event) => {

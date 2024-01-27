@@ -35,7 +35,7 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
           const transformedArtists = fetchedArtists.map((artist) => {
             return {
               id: artist._id,
-              title: artist.name,
+              name: artist.name,
             };
           });
           setArtists(transformedArtists);

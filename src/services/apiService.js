@@ -2,14 +2,21 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 /* ------------- AUDIO ------------- */
 const getAudios = async () => {
-  const url = `${API_URL}audio`;
-  const response = await fetch(url);
-  if (!response.ok) throw new Error('Erreur lors du chargement des audios');
+  const response = await fetch(`${API_URL}audio`);
+  if (!response.ok)
+    throw new Error('Erreur lors de la récupération de l’audio');
   return await response.json();
 };
 
 const getSingleAudio = async (id) => {
   const response = await fetch(`${API_URL}audio/${id}`);
+  if (!response.ok)
+    throw new Error('Erreur lors de la récupération de l’audio');
+  return await response.json();
+};
+
+const getLastAudio = async (id) => {
+  const response = await fetch(`${API_URL}audio/last`);
   if (!response.ok)
     throw new Error('Erreur lors de la récupération de l’audio');
   return await response.json();
@@ -279,6 +286,7 @@ export const apiService = {
   /* ------------- AUDIO ------------- */
   getAudios,
   getSingleAudio,
+  getLastAudio,
   editAudio,
   uploadAudio,
   deleteAudio,

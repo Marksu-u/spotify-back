@@ -33,12 +33,13 @@ const CardList = ({ items, type }) => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredItems.slice(start, start + ITEMS_PER_PAGE);
   }, [currentPage, filteredItems]);
+  console.log('ITEMS : ', currentItems);
 
   const renderListItems = useMemo(
     () => (
       <Suspense fallback={<Loader />}>
         {currentItems.map((item) => (
-          <Card key={item.id} data={item} type={type} />
+          <Card key={item._id} data={item} type={type} />
         ))}
       </Suspense>
     ),
@@ -62,11 +63,7 @@ const CardList = ({ items, type }) => {
         case 'artist':
           await apiService.createArtist(newData);
           const newArtist = await apiService.getLastArtist();
-          console.log('Objet retourné par getLastArtist:', newArtist);
-
-          const artistToAdd = { id: newArtist._id, title: newArtist.name };
-          console.log('Objet à ajouter dans IndexedDB:', artistToAdd);
-
+          const artistToAdd = { id: newArtist._id, name: newArtist.title };
           delete artistToAdd._id;
 
           console.log('last add', artistToAdd);

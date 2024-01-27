@@ -7,7 +7,7 @@ import Loader from '../components/Loader';
 const CardList = lazy(() => import('../components/CardList'));
 
 const transformArtist = async (artist) => ({
-  id: artist._id,
+  _id: artist._id,
   title: artist.name,
 });
 
@@ -29,6 +29,7 @@ const ArtistDashboardView = () => {
           );
           await saveArtists(transformedArtists);
           artistData = transformedArtists;
+          console.log('Fetched : ', transformedArtists);
         }
 
         setArtists(artistData);
@@ -45,7 +46,13 @@ const ArtistDashboardView = () => {
   return (
     <div className="dashboard-list-view ">
       <h2>Artist Dashboard</h2>
-      {isLoading ? <Loader /> : <CardList items={artists} type="artist" />}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <CardList items={artists} type="artist" />
+        </>
+      )}{' '}
     </div>
   );
 };

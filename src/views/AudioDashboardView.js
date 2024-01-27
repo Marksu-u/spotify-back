@@ -7,16 +7,16 @@ import './index.css';
 import Loader from '../components/Loader';
 const CardList = lazy(() => import('../components/CardList'));
 
-const transformAudio = async (audio) => ({
-  id: audio._id,
-  title: audio.filename,
-  artist: audio.metadata.artist.name,
-  artistId: audio.metadata.artist._id,
-  album: audio.metadata.album.title,
-  albumId: audio.metadata.album._id,
-  date: audio.metadata.date,
-  genre: audio.metadata.genre.join(', '),
-  image: convertBufferToBase64(audio.metadata.picture[0]),
+const transformAudio = async (audio, album, artistName) => ({
+  _id: audio._id,
+  title: audio.title,
+  artist: artistName,
+  artistId: album.artistId,
+  album: album.title,
+  albumId: album._id,
+  releaseDate: album.releaseDate,
+  genre: audio.genre.join(', '),
+  picture: convertBufferToBase64(album.picture[0]),
 });
 
 const convertBufferToBase64 = (picture) => {
@@ -41,10 +41,17 @@ const AudioDashboardView = () => {
         let audioData = await getAudios();
 
         if (!audioData.length) {
-          const fetchedAudios = await apiService.getAudios();
-          const transformedAudios = await Promise.all(
-            fetchedAudios.map(transformAudio)
-          );
+          const fetchedAlbums = await apiService.getAudios();
+          const transformedAudios = [];
+
+          fetchedAlbums.forEach((album) => {
+            album.audios.forEach(async (audio) => {
+              transformedAudios.push(
+                await transformAudio(audio, album, album.name)
+              );
+            });
+          });
+
           await saveAudios(transformedAudios);
           audioData = transformedAudios;
         }
