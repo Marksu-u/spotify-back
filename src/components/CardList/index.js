@@ -63,7 +63,7 @@ const CardList = ({ items, type }) => {
         case 'artist':
           await apiService.createArtist(newData);
           const newArtist = await apiService.getLastArtist();
-          const artistToAdd = { id: newArtist._id, name: newArtist.title };
+          const artistToAdd = { _id: newArtist._id, name: newArtist.title };
           delete artistToAdd._id;
           await addArtist(artistToAdd);
           break;
@@ -75,6 +75,8 @@ const CardList = ({ items, type }) => {
           break;
         case 'admin':
           await apiService.addAdmin(newData);
+          const newAdmin = await apiService.getLastAdmin();
+          // const adminToAdd = { _id: newAdmin._id, name: newAdmin. };
           break;
       }
       notificationService.notify('Ajout réussie', 'success');

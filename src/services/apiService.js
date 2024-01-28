@@ -148,11 +148,19 @@ const getAlbums = async () => {
   return await response.json();
 };
 
+const getLastAlbum = async (id) => {
+  const response = await fetch(`${API_URL}album/last`);
+  if (!response.ok)
+    throw new Error(`Erreur lors de la récupération de l'album`);
+  return await response.json();
+};
+
 const getAllAlbums = async () => {
   const response = await fetch(`${API_URL}album/all`);
   if (!response.ok) throw new Error('Erreur lors du chargement des albums');
   return await response.json();
 };
+
 const getSingleAlbum = async (id) => {
   const response = await fetch(`${API_URL}album/${id}`);
   if (!response.ok)
@@ -222,6 +230,17 @@ const getAdmins = async () => {
     throw new Error(
       'Erreur lors de la récupération des données des administrateurs'
     );
+  return await response.json();
+};
+
+const getLastAdmin = async (id) => {
+  const response = await fetch(`${API_URL}admin/last`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok)
+    throw new Error('Erreur lors de la récupération de l’admin');
   return await response.json();
 };
 
@@ -301,6 +320,7 @@ export const apiService = {
   deleteArtist,
   /* ------------- ALBUM ------------- */
   getAlbums,
+  getLastAlbum,
   getAllAlbums,
   getSingleAlbum,
   editAlbum,
@@ -308,6 +328,7 @@ export const apiService = {
   deleteAlbum,
   /* ------------- ADMIN ------------- */
   getAdmins,
+  getLastAdmin,
   getSingleAdmin,
   addAdmin,
   editAdmin,

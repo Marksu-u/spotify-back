@@ -47,6 +47,13 @@ export const getAudios = async () => {
   });
 };
 
+export const addAudio = async (artist) => {
+  const db = await openDatabase();
+  const transaction = db.transaction('audios', 'readwrite');
+  const store = transaction.objectStore('audios');
+  store.add(artist);
+};
+
 export const saveArtists = async (artists) => {
   const db = await openDatabase();
   const transaction = db.transaction('artists', 'readwrite');
@@ -108,4 +115,11 @@ export const getAlbums = async () => {
       resolve(request.result);
     };
   });
+};
+
+export const addAlbum = async (artist) => {
+  const db = await openDatabase();
+  const transaction = db.transaction('albums', 'readwrite');
+  const store = transaction.objectStore('albums');
+  store.add(artist);
 };
