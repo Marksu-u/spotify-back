@@ -1,6 +1,7 @@
 import React, { Suspense, useState, useEffect, lazy, memo } from 'react';
 import PropTypes from 'prop-types';
 import { apiService } from '../../services/apiService';
+import { getAlbums, getArtists } from '../../services/indexerDBService';
 import './index.css';
 
 import Loader from '../Loader';
@@ -17,28 +18,16 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
     if (actionType !== 'delete') {
       const fetchAlbums = async () => {
         try {
-          const fetchedAlbums = await apiService.getAlbums();
-          const transformedAlbums = fetchedAlbums.map((album) => {
-            return {
-              id: album._id,
-              title: album.title,
-            };
-          });
-          setAlbums(transformedAlbums);
+          let albumData = await getAlbums();
+          setAlbums(albumData);
         } catch (error) {
           console.error(error);
         }
       };
       const fetchArtists = async () => {
         try {
-          const fetchedArtists = await apiService.getArtists();
-          const transformedArtists = fetchedArtists.map((artist) => {
-            return {
-              id: artist._id,
-              name: artist.name,
-            };
-          });
-          setArtists(transformedArtists);
+          let artistData = await getArtists();
+          setArtists(artistData);
         } catch (error) {
           console.error(error);
         }
@@ -51,11 +40,10 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData({
-      ...formData,
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
   };
 
   const handleChangeFile = (e) => {
@@ -112,10 +100,14 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
               <Select
                 label="Artiste"
                 name="artistId"
-                options={[{ id: '', title: 'Sélectionner...' }, ...artists]}
+                options={artists}
                 value={formData.artistId || ''}
-                onChange={handleChange}
-                required
+                onChange={(selectedArtistId) => {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    artistId: selectedArtistId,
+                  }));
+                }}
               />
               <Input
                 type="file"
@@ -159,18 +151,28 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
                 onChange={handleChange}
               />
               <Select
-                label="Artist"
+                label="Artiste"
                 name="artistId"
-                options={[{ id: '', title: 'Sélectionner...' }, ...artists]}
+                options={artists}
                 value={formData.artistId || ''}
-                onChange={handleChange}
+                onChange={(selectedArtistId) => {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    artistId: selectedArtistId,
+                  }));
+                }}
               />
               <Select
                 label="Album"
                 name="albumId"
-                options={[{ id: '', title: 'Sélectionner...' }, ...albums]}
-                value={formData.albumId || '65a1a0ff45505f5fa98ae996'}
-                onChange={handleChange}
+                options={albums}
+                value={formData.albumId || ''}
+                onChange={(selectedAlbumId) => {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    albumId: selectedAlbumId,
+                  }));
+                }}
               />
               {actionType === 'add' && (
                 <Input
@@ -194,17 +196,18 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
               />
               <Input
                 type="text"
-                label="Username"
+                label="Identifiant"
                 name="title"
                 value={formData.title || ''}
                 onChange={handleChange}
               />
               <Input
-                type="text"
-                label="Mot de passe"
+                type="password"
+                label="Confirmer votre mot de passe"
                 name="password"
-                value={''}
+                value={formData.password || ''}
                 onChange={handleChange}
+                required={true}
               />
             </>
           );
@@ -236,7 +239,7 @@ Modal.propTypes = {
   onClose: PropTypes.func.isRequired,
   data: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,
-  type: PropTypes.oneOf(['artist', 'song', 'album']).isRequired,
+  type: PropTypes.oneOf(['artist', 'song', 'album', 'admin']).isRequired,
   actionType: PropTypes.oneOf(['update', 'delete', 'add']).isRequired,
 };
 
