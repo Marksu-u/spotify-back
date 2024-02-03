@@ -5,7 +5,13 @@ import './index.css';
 
 import Loader from '../components/Loader';
 const CardList = lazy(() => import('../components/CardList'));
-const Button = lazy(() => import('../components/Button'));
+
+const transformAdmins = (admin) => ({
+  _id: admin._id,
+  title: admin.username,
+  artist: admin.email,
+  password: '',
+});
 
 const AdminManagementView = () => {
   const [admins, setAdmins] = useState([]);
@@ -14,27 +20,24 @@ const AdminManagementView = () => {
   useEffect(() => {
     const fecthAdmins = async () => {
       setIsLoading(true);
+
       try {
         const fecthedAdmins = await apiService.getAdmins();
-        setAdmins((prevAdmins) => [
-          ...prevAdmins,
-          ...fecthedAdmins.map(transformAdmins),
-        ]);
+        const transformedAdmins = await Promise.all(
+          fecthedAdmins.map(transformAdmins)
+        );
+
+        console.log(fecthedAdmins);
+        setAdmins(transformedAdmins);
       } catch (error) {
         console.error(error);
       } finally {
         setIsLoading(false);
       }
     };
-    fecthAdmins();
-    notificationService.notify('Admins chargés avec succès', 'success');
-  }, []);
 
-  const transformAdmins = (admin) => ({
-    id: admin._id,
-    title: admin.username,
-    artist: admin.email,
-  });
+    fecthAdmins();
+  }, []);
 
   return (
     <div className="dashboard-list-view">

@@ -2,6 +2,11 @@ import React, { useState, lazy } from 'react';
 import PropTypes from 'prop-types';
 import { apiService } from '../../services/apiService';
 import { notificationService } from '../../services/notificationService';
+import {
+  deleteAlbum,
+  deleteArtist,
+  deleteAudio,
+} from '../../services/indexerDBService';
 import './index.css';
 
 const Button = lazy(() => import('../Button'));
@@ -19,61 +24,75 @@ const Card = ({ type, data, onClick }) => {
   };
 
   const handleDelete = () => {
-    handleAction('delete', data);
+    setModalOpen(true);
+    setCurrentData(data);
+    setActionType('delete');
   };
 
-  const handleSubmit = (editedData) => {
-    handleAction(actionType, { ...data, ...editedData });
-  };
+  const handleSubmit = async (editedData) => {
+    setModalOpen(false);
 
-  const handleAction = async (actionType, editedData) => {
-    const actionMap = {
-      delete: {
-        artist: 'deleteArtist',
-        song: 'deleteAudio',
-        album: 'deleteAlbum',
-        admin: 'deleteAdmin',
-      },
-      update: {
-        artist: 'editArtist',
-        song: 'editAudio',
-        album: 'editAlbum',
-        admin: 'editAdmin',
-      },
-    };
+    switch (actionType) {
+      case 'update':
+        try {
+          await apiService.editItem(type, editedData);
+          notificationService.notify('Item updated successfully', 'success');
+        } catch (err) {
+          console.error('Error updating item:', err);
+          notificationService.notify('Error updating item', 'error');
+        }
+        break;
 
-    const performAction = async (type, data) => {
-      const actionFunction = actionMap[actionType][type];
-      if (!actionFunction) {
-        throw new Error(`Unknown type for ${actionType}`);
-      }
-      return await apiService[actionFunction](data);
-    };
+      case 'delete':
+        switch (type) {
+          case 'song':
+            try {
+              await deleteAudio(editedData._id);
+              await apiService.deleteSong(editedData._id);
+              notificationService.notify(
+                'Song deleted successfully',
+                'success'
+              );
+            } catch (err) {
+              console.error('Error deleting song:', err);
+              notificationService.notify('Error deleting song', 'error');
+            }
+            break;
 
-    try {
-      const data = actionType === 'delete' ? editedData.id : editedData;
-      console.log(`${actionType === 'delete' ? 'Delete' : 'Edit'}: `, data);
+          case 'album':
+            try {
+              await deleteAlbum(editedData._id);
+              await apiService.deleteAlbum(editedData._id);
+              notificationService.notify(
+                'Album deleted successfully',
+                'success'
+              );
+            } catch (err) {
+              console.error('Error deleting album:', err);
+              notificationService.notify('Error deleting album', 'error');
+            }
+            break;
+          case 'artist':
+            try {
+              await deleteArtist(editedData._id);
+              await apiService.deleteArtist(editedData._id);
+              notificationService.notify(
+                'Artist deleted successfully',
+                'success'
+              );
+            } catch (err) {
+              console.error('Error deleting artist:', err);
+            }
+            break;
+          default:
+            console.warn(`Unhandled type: ${type}`);
+            break;
+        }
+        break;
 
-      await performAction(type, data);
-      notificationService.notify(
-        `${
-          actionType === 'delete' ? 'Item deleted' : 'Enregistré!'
-        } successfully`,
-        'success'
-      );
-
-      if (actionType !== 'delete') {
-        setModalOpen(false);
-      }
-    } catch (error) {
-      console.error(
-        `Error ${actionType === 'delete' ? 'deleting' : 'updating'} item:`,
-        error
-      );
-      notificationService.notify(
-        `Error ${actionType === 'delete' ? 'deleting' : 'updating'} item`,
-        'error'
-      );
+      default:
+        console.warn(`Unhandled actionType: ${actionType}`);
+        break;
     }
   };
 

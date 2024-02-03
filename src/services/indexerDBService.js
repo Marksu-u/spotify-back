@@ -47,11 +47,18 @@ export const getAudios = async () => {
   });
 };
 
-export const addAudio = async (artist) => {
+export const addAudio = async (audio) => {
   const db = await openDatabase();
   const transaction = db.transaction('audios', 'readwrite');
   const store = transaction.objectStore('audios');
-  store.add(artist);
+  store.add(audio);
+};
+
+export const deleteAudio = async (audio) => {
+  const db = await openDatabase();
+  const transaction = db.transaction('audios', 'readwrite');
+  const store = transaction.objectStore('audios');
+  store.delete(audio);
 };
 
 export const saveArtists = async (artists) => {
@@ -89,6 +96,13 @@ export const addArtist = async (artist) => {
   store.add(artist);
 };
 
+export const deleteArtist = async (artist) => {
+  const db = await openDatabase();
+  const transaction = db.transaction('artists', 'readwrite');
+  const store = transaction.objectStore('artists');
+  store.delete(artist);
+};
+
 export const saveAlbums = async (albums) => {
   const db = await openDatabase();
   const transaction = db.transaction('albums', 'readwrite');
@@ -117,9 +131,16 @@ export const getAlbums = async () => {
   });
 };
 
-export const addAlbum = async (artist) => {
+export const addAlbum = async (album) => {
   const db = await openDatabase();
   const transaction = db.transaction('albums', 'readwrite');
   const store = transaction.objectStore('albums');
-  store.add(artist);
+  store.add(album);
+};
+
+export const deleteAlbum = async (album) => {
+  const db = await openDatabase();
+  const transaction = db.transaction('albums', 'readwrite');
+  const store = transaction.objectStore('albums');
+  store.delete(album);
 };

@@ -15,7 +15,7 @@ const getSingleAudio = async (id) => {
   return await response.json();
 };
 
-const getLastAudio = async (id) => {
+const getLastAudio = async () => {
   const response = await fetch(`${API_URL}audio/last`);
   if (!response.ok)
     throw new Error('Erreur lors de la récupération de l’audio');
@@ -100,8 +100,8 @@ const getSingleArtist = async (id) => {
 
 const editArtist = async (artistData) => {
   const token = localStorage.getItem('userToken');
-  const id = artistData.id;
-  const response = await fetch(`${API_URL}artist/${id}`, {
+  const _id = artistData._id;
+  const response = await fetch(`${API_URL}artist/${_id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -169,31 +169,39 @@ const getSingleAlbum = async (id) => {
 };
 
 const createAlbum = async (albumData) => {
-  console.log(albumData);
+  const token = localStorage.getItem('userToken');
+  const formData = new FormData();
+
+  for (const key in albumData) {
+    if (albumData.hasOwnProperty(key) && key !== 'picture') {
+      formData.append(key, albumData[key]);
+    }
+  }
+
+  if (albumData.picture instanceof File) {
+    formData.append('albumImage', albumData.picture);
+  }
+
   const response = await fetch(`${API_URL}album`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    body: albumData,
+    body: formData,
   });
 
   if (!response.ok) throw new Error('Erreur lors de la création de l’album');
   return await response.json();
 };
 
-const editAlbum = async (id, albumData) => {
-  const formData = new FormData();
-  formData.append('title', albumData.title);
-  formData.append('artist', albumData.artistId);
-  formData.append('releaseDate', albumData.releaseDate);
-  formData.append('genre', albumData.genre);
+const editAlbum = async (albumData) => {
+  const token = localStorage.getItem('userToken');
 
   if (albumData.picture && albumData.picture instanceof File) {
     formData.append('albumImage', albumData.picture);
   }
 
-  const response = await fetch(`${API_URL}album/${id}`, {
+  const response = await fetch(`${API_URL}album/${_id}`, {
     method: 'PUT',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -233,7 +241,7 @@ const getAdmins = async () => {
   return await response.json();
 };
 
-const getLastAdmin = async (id) => {
+const getLastAdmin = async () => {
   const response = await fetch(`${API_URL}admin/last`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -273,9 +281,10 @@ const addAdmin = async (adminData) => {
   return await response.json();
 };
 
-const editAdmin = async (id, adminData) => {
+const editAdmin = async (adminData) => {
   const token = localStorage.getItem('userToken');
-  const response = await fetch(`${API_URL}admin/${id}`, {
+  const _id = adminData._id;
+  const response = await fetch(`${API_URL}admin/${_id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
