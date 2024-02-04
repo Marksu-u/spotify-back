@@ -6,7 +6,7 @@ export const transformAlbums = async (album) => ({
   artist: album.artist.name,
   artistId: album.artist._id,
   releaseDate: album.releaseDate,
-  genre: album.genre.join(', '),
+  genre: album.genre,
   picture: convertBufferToBase64(album.picture[0]),
 });
 
@@ -23,6 +23,6 @@ export const transformAudio = async (audio, album, artistName) => ({
   album: album.title,
   albumId: album._id,
   releaseDate: album.releaseDate,
-  genre: audio.genre.join(', '),
+  genre: audio.genre,
   picture: convertBufferToBase64(album.picture[0]),
 });

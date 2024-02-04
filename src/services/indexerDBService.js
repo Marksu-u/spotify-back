@@ -48,10 +48,22 @@ export const getAudios = async () => {
 };
 
 export const addAudio = async (audio) => {
-  const db = await openDatabase();
-  const transaction = db.transaction('audios', 'readwrite');
-  const store = transaction.objectStore('audios');
-  store.add(audio);
+  try {
+    const db = await openDatabase();
+    const transaction = db.transaction('audios', 'readwrite');
+    const store = transaction.objectStore('audios');
+
+    return new Promise((resolve, reject) => {
+      const request = store.add(audio);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+      transaction.oncomplete = () => console.log('Transaction completed.');
+      transaction.onerror = () => reject(transaction.error);
+    });
+  } catch (error) {
+    console.error('Error adding audio:', error);
+    throw error;
+  }
 };
 
 export const deleteAudio = async (audio) => {
@@ -132,10 +144,25 @@ export const getAlbums = async () => {
 };
 
 export const addAlbum = async (album) => {
-  const db = await openDatabase();
-  const transaction = db.transaction('albums', 'readwrite');
-  const store = transaction.objectStore('albums');
-  store.add(album);
+  try {
+    const db = await openDatabase();
+    const transaction = db.transaction('albums', 'readwrite');
+    const store = transaction.objectStore('albums');
+
+    return new Promise((resolve, reject) => {
+      const request = store.add(album);
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+      transaction.oncomplete = () =>
+        console.log('Transaction for adding album completed.');
+
+      transaction.onerror = () => reject(transaction.error);
+    });
+  } catch (error) {
+    console.error('Error adding album:', error);
+    throw error;
+  }
 };
 
 export const deleteAlbum = async (album) => {

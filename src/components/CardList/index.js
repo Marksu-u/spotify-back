@@ -67,7 +67,7 @@ const CardList = ({ items, type }) => {
         case 'artist':
           await apiService.createArtist(newData);
           const newArtist = await apiService.getLastArtist();
-          const artistToAdd = transformArtist(newArtist);
+          const artistToAdd = await transformArtist(newArtist);
           delete artistToAdd._id;
           await addArtist(artistToAdd);
           break;
@@ -82,10 +82,8 @@ const CardList = ({ items, type }) => {
         case 'album':
           await apiService.createAlbum(newData);
           const newAlbum = await apiService.getLastAlbum();
-          const albumToAdd = transformAlbums(newAlbum);
-          delete addAlbum._id;
+          const albumToAdd = await transformAlbums(newAlbum);
           await addAlbum(albumToAdd);
-          console.log(newAlbum);
           break;
         case 'admin':
           await apiService.addAdmin(newData);

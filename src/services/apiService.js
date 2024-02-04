@@ -155,12 +155,6 @@ const getLastAlbum = async (id) => {
   return await response.json();
 };
 
-const getAllAlbums = async () => {
-  const response = await fetch(`${API_URL}album/all`);
-  if (!response.ok) throw new Error('Erreur lors du chargement des albums');
-  return await response.json();
-};
-
 const getSingleAlbum = async (id) => {
   const response = await fetch(`${API_URL}album/${id}`);
   if (!response.ok)
@@ -179,7 +173,7 @@ const createAlbum = async (albumData) => {
   }
 
   if (albumData.picture instanceof File) {
-    formData.append('albumImage', albumData.picture);
+    formData.append('picture', albumData.picture);
   }
 
   const response = await fetch(`${API_URL}album`, {
@@ -330,7 +324,6 @@ export const apiService = {
   /* ------------- ALBUM ------------- */
   getAlbums,
   getLastAlbum,
-  getAllAlbums,
   getSingleAlbum,
   editAlbum,
   createAlbum,

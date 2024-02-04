@@ -1,6 +1,4 @@
-## À METTRE DANS VOTRE PROJET SOUS PEINE DE ZÉRO
-
-Équipe :
+# Équipe :
 
 Amraoui Zakaria
 
@@ -8,9 +6,9 @@ Jaafar Amir
 
 Gapasin Marc
 
-Rendu
+## RENDU
 
-Liens GITHUB pour le rendu :
+### Liens GITHUB pour le rendu :
 
 BackOffice : https://github.com/Marksu-u/spotify-back
 
@@ -18,17 +16,19 @@ Front : https://github.com/Marksu-u/spotify-front
 
 Back : https://github.com/Marksu-u/spotify-api
 
-Mise en Prod
+### Mise en Prod
 
-Lien de vos projets mis en prod :
+---
+
+### Lien de vos projets mis en prod :
 
 BackOffice : http://backoffice.marksu.fr/
 
 Front : http://frontoffice.marksu.fr/
 
-Back : http://ec2-35-180-230-197.eu-west-3.compute.amazonaws.com:4000/api/
+Back : http://ec2-13-39-25-171.eu-west-3.compute.amazonaws.com:4000/api/
 
-Liens Vidéo Demande Spécifique
+### Liens Vidéo Demande Spécifique
 
 Lors de votre passage, je vous ai demandé d'ajouter des fonctionnalités :
 
@@ -42,6 +42,6 @@ Demande 2 :
 
 Demande 3 :
 
-SOUHAITEZ-VOUS UNE ANALYSE ET DES RETOURS CONCRETS SUR VOTRE CODE ?
+### SOUHAITEZ-VOUS UNE ANALYSE ET DES RETOURS CONCRETS SUR VOTRE CODE ?
 
 Oui, clairement je veux
