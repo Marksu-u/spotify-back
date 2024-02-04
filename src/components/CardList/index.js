@@ -1,7 +1,12 @@
 import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { notificationService } from '../../services/notificationService';
 import { apiService } from '../../services/apiService';
-import { addArtist } from '../../services/indexerDBService';
+import { addAlbum, addArtist, addAudio } from '../../services/indexerDBService';
+import {
+  transformAlbums,
+  transformAudio,
+  transformArtist,
+} from '../../services/transformService';
 import PropTypes from 'prop-types';
 
 import Loader from '../Loader';
@@ -33,7 +38,6 @@ const CardList = ({ items, type }) => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredItems.slice(start, start + ITEMS_PER_PAGE);
   }, [currentPage, filteredItems]);
-  console.log('ITEMS : ', currentItems);
 
   const renderListItems = useMemo(
     () => (
@@ -63,20 +67,30 @@ const CardList = ({ items, type }) => {
         case 'artist':
           await apiService.createArtist(newData);
           const newArtist = await apiService.getLastArtist();
-          const artistToAdd = { _id: newArtist._id, name: newArtist.title };
+          const artistToAdd = transformArtist(newArtist);
           delete artistToAdd._id;
           await addArtist(artistToAdd);
           break;
         case 'song':
           await apiService.uploadAudio(newData);
+          const newAudio = await apiService.getLastAudio();
+          const audioToAdd = await transformAudio(newAudio);
+          delete audioToAdd._id;
+          await addAudio(audioToAdd);
+          console.log(newAudio);
           break;
         case 'album':
           await apiService.createAlbum(newData);
+          const newAlbum = await apiService.getLastAlbum();
+          const albumToAdd = transformAlbums(newAlbum);
+          delete addAlbum._id;
+          await addAlbum(albumToAdd);
+          console.log(newAlbum);
           break;
         case 'admin':
           await apiService.addAdmin(newData);
           const newAdmin = await apiService.getLastAdmin();
-          // const adminToAdd = { _id: newAdmin._id, name: newAdmin. };
+          console.log(newAdmin);
           break;
       }
       notificationService.notify('Ajout réussie', 'success');

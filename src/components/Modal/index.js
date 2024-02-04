@@ -1,6 +1,5 @@
 import React, { Suspense, useState, useEffect, lazy, memo } from 'react';
 import PropTypes from 'prop-types';
-import { apiService } from '../../services/apiService';
 import { getAlbums, getArtists } from '../../services/indexerDBService';
 import './index.css';
 

@@ -1,15 +1,11 @@
 import React, { useState, useEffect, lazy } from 'react';
 import { apiService } from '../services/apiService';
 import { saveArtists, getArtists } from '../services/indexerDBService';
+import { transformArtist } from '../services/transformService';
 import './index.css';
 
 import Loader from '../components/Loader';
 const CardList = lazy(() => import('../components/CardList'));
-
-const transformArtist = async (artist) => ({
-  _id: artist._id,
-  title: artist.name,
-});
 
 const ArtistDashboardView = () => {
   const [artists, setArtists] = useState([]);

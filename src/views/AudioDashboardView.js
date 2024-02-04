@@ -1,33 +1,11 @@
 import { lazy, useEffect, useState } from 'react';
-import notFound from '../assets/404.png';
 import { apiService } from '../services/apiService';
 import { saveAudios, getAudios } from '../services/indexerDBService';
+import { transformAudio } from '../services/transformService';
 import './index.css';
 
 import Loader from '../components/Loader';
 const CardList = lazy(() => import('../components/CardList'));
-
-const transformAudio = async (audio, album, artistName) => ({
-  _id: audio._id,
-  title: audio.title,
-  artist: artistName,
-  artistId: album.artistId,
-  album: album.title,
-  albumId: album._id,
-  releaseDate: album.releaseDate,
-  genre: audio.genre.join(', '),
-  picture: convertBufferToBase64(album.picture[0]),
-});
-
-const convertBufferToBase64 = (picture) => {
-  if (picture?.data?.data) {
-    const buffer = new Uint8Array(picture.data.data);
-    let binary = '';
-    buffer.forEach((b) => (binary += String.fromCharCode(b)));
-    return `data:${picture.format};base64,${window.btoa(binary)}`;
-  }
-  return notFound;
-};
 
 const AudioDashboardView = () => {
   const [audios, setAudios] = useState([]);

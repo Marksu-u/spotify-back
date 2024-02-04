@@ -85,13 +85,15 @@ const Card = ({ type, data, onClick }) => {
             }
             break;
           default:
-            console.warn(`Unhandled type: ${type}`);
+            // console.warn(`Unhandled type: ${type}`);
+            notificationService.notify('Unauthorized', 'warning');
             break;
         }
         break;
 
       default:
-        console.warn(`Unhandled actionType: ${actionType}`);
+        // console.warn(`Unhandled actionType: ${actionType}`);
+        notificationService.notify('Unauthorized Action', 'warning');
         break;
     }
   };
