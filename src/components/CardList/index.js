@@ -68,16 +68,13 @@ const CardList = ({ items, type }) => {
           await apiService.createArtist(newData);
           const newArtist = await apiService.getLastArtist();
           const artistToAdd = await transformArtist(newArtist);
-          delete artistToAdd._id;
           await addArtist(artistToAdd);
           break;
         case 'song':
           await apiService.uploadAudio(newData);
           const newAudio = await apiService.getLastAudio();
           const audioToAdd = await transformAudio(newAudio);
-          delete audioToAdd._id;
           await addAudio(audioToAdd);
-          console.log(newAudio);
           break;
         case 'album':
           await apiService.createAlbum(newData);
@@ -88,7 +85,6 @@ const CardList = ({ items, type }) => {
         case 'admin':
           await apiService.addAdmin(newData);
           const newAdmin = await apiService.getLastAdmin();
-          console.log(newAdmin);
           break;
       }
       notificationService.notify('Ajout réussie', 'success');

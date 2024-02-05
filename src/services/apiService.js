@@ -116,13 +116,15 @@ const editArtist = async (artistData) => {
 
 const createArtist = async (artistData) => {
   const token = localStorage.getItem('userToken');
+  const artistToAdd = { name: artistData.title };
+
   const response = await fetch(`${API_URL}artist`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(artistData),
+    body: JSON.stringify(artistToAdd),
   });
   if (!response.ok) throw new Error('Erreur lors de la création de l’artiste');
   return await response.json();

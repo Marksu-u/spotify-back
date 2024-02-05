@@ -1,5 +1,5 @@
-import React, { Suspense, lazy, useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Button from '../components/Button';
 import LogoutComponent from '../components/Logout';
 import Logo from '../logo.png';
@@ -12,18 +12,17 @@ const AdminDashboard = lazy(() => import('./AdminDashboardView'));
 
 const DashboardView = () => {
   const navigate = useNavigate();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const dashboards = ['/audio', '/album', '/artist', '/admin'];
+  const location = useLocation();
 
   useEffect(() => {
-    navigate(dashboards[currentIndex]);
-  }, [currentIndex, navigate]);
-
-  const handleButtonClick = (path) => {
-    const index = dashboards.indexOf(path);
-    if (index !== -1) {
-      setCurrentIndex(index);
+    const currentPath = location.pathname;
+    if (currentPath === '/' || currentPath === '/dashboard') {
+      navigate('/dashboard/audio');
     }
+  }, [navigate, location.pathname]);
+
+  const handleButton = (path) => {
+    navigate(path);
   };
 
   return (
@@ -34,13 +33,10 @@ const DashboardView = () => {
           Tableau de Bord
         </h2>
         <div className="dashboard-buttons">
-          <Button label="Audios" onClick={() => handleButtonClick('/audio')} />
-          <Button label="Albums" onClick={() => handleButtonClick('/album')} />
-          <Button
-            label="Artists"
-            onClick={() => handleButtonClick('/artist')}
-          />
-          <Button label="Admins" onClick={() => handleButtonClick('/admin')} />
+          <Button label="Audios" onClick={() => handleButton('/audio')} />
+          <Button label="Albums" onClick={() => handleButton('/album')} />
+          <Button label="Artists" onClick={() => handleButton('/artist')} />
+          <Button label="Admins" onClick={() => handleButton('/admin')} />
           <LogoutComponent />
         </div>
       </div>
