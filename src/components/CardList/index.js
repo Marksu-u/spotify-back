@@ -17,7 +17,7 @@ const Search = lazy(() => import('../Search'));
 
 const ITEMS_PER_PAGE = 4;
 
-const CardList = ({ items, type }) => {
+const CardList = ({ items, type, onRefresh }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -88,6 +88,7 @@ const CardList = ({ items, type }) => {
           break;
       }
       notificationService.notify('Ajout réussie', 'success');
+      onRefresh();
     } catch (error) {
       console.error("Erreur lors de l'ajout de l'élément :", error);
     }

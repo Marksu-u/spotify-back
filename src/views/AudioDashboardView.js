@@ -1,4 +1,4 @@
-import { lazy, useEffect, useState } from 'react';
+import { lazy, useEffect, useState, Suspense } from 'react';
 import { apiService } from '../services/apiService';
 import { saveAudios, getAudios } from '../services/indexerDBService';
 import { transformAudio } from '../services/transformService';
@@ -11,37 +11,37 @@ const AudioDashboardView = () => {
   const [audios, setAudios] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchAudios = async () => {
-      setIsLoading(true);
+  const fetchAudios = async () => {
+    setIsLoading(true);
 
-      try {
-        let audioData = await getAudios();
+    try {
+      let audioData = await getAudios();
 
-        if (!audioData.length) {
-          const fetchedAlbums = await apiService.getAudios();
-          const transformedAudios = [];
+      if (!audioData.length) {
+        const fetchedAlbums = await apiService.getAudios();
+        const transformedAudios = [];
 
-          fetchedAlbums.forEach((album) => {
-            album.audios.forEach(async (audio) => {
-              transformedAudios.push(
-                await transformAudio(audio, album, album.name)
-              );
-            });
+        fetchedAlbums.forEach((album) => {
+          album.audios.forEach(async (audio) => {
+            transformedAudios.push(
+              await transformAudio(audio, album, album.name)
+            );
           });
+        });
 
-          await saveAudios(transformedAudios);
-          audioData = transformedAudios;
-        }
-
-        setAudios(audioData);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
+        await saveAudios(transformedAudios);
+        audioData = transformedAudios;
       }
-    };
 
+      setAudios(audioData);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchAudios();
   }, []);
 
@@ -52,7 +52,9 @@ const AudioDashboardView = () => {
         <Loader />
       ) : (
         <>
-          <CardList items={audios} type="song" />
+          <Suspense fallback={<Loader />}>
+            <CardList items={audios} type="song" onRefresh={fetchAudios} />
+          </Suspense>
         </>
       )}
     </div>

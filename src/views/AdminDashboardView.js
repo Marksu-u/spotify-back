@@ -1,41 +1,34 @@
-import { useState, useEffect, lazy } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { apiService } from '../services/apiService';
-import { notificationService } from '../services/notificationService';
+import { transformAdmins } from '../services/transformService';
 import './index.css';
 
 import Loader from '../components/Loader';
 const CardList = lazy(() => import('../components/CardList'));
 
-const transformAdmins = (admin) => ({
-  _id: admin._id,
-  title: admin.username,
-  artist: admin.email,
-  password: '',
-});
-
-const AdminManagementView = () => {
+const AdminDashboardView = () => {
   const [admins, setAdmins] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const fecthAdmins = async () => {
+    setIsLoading(true);
+
+    try {
+      const fecthedAdmins = await apiService.getAdmins();
+      const transformedAdmins = await Promise.all(
+        fecthedAdmins.map(transformAdmins)
+      );
+
+      console.log(fecthedAdmins);
+      setAdmins(transformedAdmins);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fecthAdmins = async () => {
-      setIsLoading(true);
-
-      try {
-        const fecthedAdmins = await apiService.getAdmins();
-        const transformedAdmins = await Promise.all(
-          fecthedAdmins.map(transformAdmins)
-        );
-
-        console.log(fecthedAdmins);
-        setAdmins(transformedAdmins);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fecthAdmins();
   }, []);
 
@@ -46,11 +39,13 @@ const AdminManagementView = () => {
         <Loader />
       ) : (
         <>
-          <CardList items={admins} type="admin" />
+          <Suspense fallback={<Loader />}>
+            <CardList items={admins} type="admin" onRefresh={fecthAdmins} />
+          </Suspense>
         </>
       )}
     </div>
   );
 };
 
-export default AdminManagementView;
+export default AdminDashboardView;

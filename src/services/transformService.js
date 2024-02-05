@@ -26,3 +26,10 @@ export const transformAudio = async (audio, album, artistName) => ({
   genre: audio.genre,
   picture: convertBufferToBase64(album.picture[0]),
 });
+
+export const transformAdmins = (admin) => ({
+  _id: admin._id,
+  title: admin.username,
+  artist: admin.email,
+  password: '',
+});

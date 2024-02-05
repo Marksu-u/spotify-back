@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { saveAlbums, getAlbums } from '../services/indexerDBService';
 import { apiService } from '../services/apiService';
 import { transformAlbums } from '../services/transformService';
@@ -11,30 +11,27 @@ const AlbumDashboardView = () => {
   const [albums, setAlbums] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchAlbums = async () => {
-      setIsLoading(true);
-
-      try {
-        let albumData = await getAlbums();
-
-        if (!albumData.length) {
-          const fetchedAlbums = await apiService.getAlbums();
-          const transformedAlbums = await Promise.all(
-            fetchedAlbums.map(transformAlbums)
-          );
-          await saveAlbums(transformedAlbums);
-          albumData = transformedAlbums;
-        }
-
-        setAlbums(albumData);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
+  const fetchAlbums = async () => {
+    setIsLoading(true);
+    try {
+      let albumData = await getAlbums();
+      if (!albumData.length) {
+        const fetchedAlbums = await apiService.getAlbums();
+        const transformedAlbums = await Promise.all(
+          fetchedAlbums.map(transformAlbums)
+        );
+        await saveAlbums(transformedAlbums);
+        albumData = transformedAlbums;
       }
-    };
+      setAlbums(albumData);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchAlbums();
   }, []);
 
@@ -45,7 +42,9 @@ const AlbumDashboardView = () => {
         <Loader />
       ) : (
         <>
-          <CardList items={albums} type="album" />
+          <Suspense fallback={<Loader />}>
+            <CardList items={albums} type="album" onRefresh={fetchAlbums} />
+          </Suspense>
         </>
       )}
     </div>
