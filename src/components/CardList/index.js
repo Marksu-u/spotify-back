@@ -73,7 +73,12 @@ const CardList = ({ items, type, onRefresh }) => {
         case 'song':
           await apiService.uploadAudio(newData);
           const newAudio = await apiService.getLastAudio();
-          const audioToAdd = await transformAudio(newAudio);
+          console.log(newAudio);
+          const audioToAdd = await transformAudio(
+            newAudio.audios[0],
+            newAudio,
+            newAudio.name
+          );
           await addAudio(audioToAdd);
           break;
         case 'album':
@@ -84,12 +89,12 @@ const CardList = ({ items, type, onRefresh }) => {
           break;
         case 'admin':
           await apiService.addAdmin(newData);
-          const newAdmin = await apiService.getLastAdmin();
           break;
       }
       notificationService.notify('Ajout réussie', 'success');
       onRefresh();
     } catch (error) {
+      notificationService.notify('Erreur', 'warning');
       console.error("Erreur lors de l'ajout de l'élément :", error);
     }
   };
