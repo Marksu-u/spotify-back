@@ -26,59 +26,61 @@ const Card = ({ type, data, onClick, onRefresh }) => {
   const [actionType, setActionType] = useState(null);
 
   const performUpdate = async (editedData) => {
-    switch (type) {
-      case 'song':
-        await apiService.editAudio(editedData);
-        const editAudio = await apiService.getSingleAudio(editedData._id);
-        const audioToEdit = await transformAudio(
-          editAudio.audios[0],
-          editAudio,
-          editAudio.name
-        );
-        await updateAudio(audioToEdit);
-        notificationService.notify('Song updated successfully', 'success');
-        onRefresh();
-        break;
-      case 'artist':
-        await apiService.editArtist(editedData);
-        const editArtist = await apiService.getSingleArtist(editedData._id);
-        const artistToEdit = await transformArtist(editArtist);
-        await updateArtist(artistToEdit);
-        notificationService.notify('Artist updated successfully', 'success');
-        onRefresh();
-        break;
-      case 'album':
-        await apiService.editAlbum(editedData);
-        const editAlbum = await apiService.getSingleAlbum(editedData._id);
-        const albumToEdit = await transformAlbums(editAlbum);
-        await updateAlbum(albumToEdit);
-        notificationService.notify('Album updated successfully', 'success');
-        onRefresh();
-        break;
-      default:
-        console.error(`Unsupported type for update: ${type}`);
-    }
+    try {
+      switch (type) {
+        case 'song':
+          await apiService.editAudio(editedData);
+          const editAudio = await apiService.getSingleAudio(editedData._id);
+          const audioToEdit = await transformAudio(
+            editAudio.audios[0],
+            editAudio,
+            editAudio.name
+          );
+          await updateAudio(audioToEdit);
+          break;
+        case 'artist':
+          await apiService.editArtist(editedData);
+          const editArtist = await apiService.getSingleArtist(editedData._id);
+          const artistToEdit = await transformArtist(editArtist);
+          await updateArtist(artistToEdit);
+          break;
+        case 'album':
+          await apiService.editAlbum(editedData);
+          const editAlbum = await apiService.getSingleAlbum(editedData._id);
+          const albumToEdit = await transformAlbums(editAlbum);
+          await updateAlbum(albumToEdit);
+          break;
+        default:
+          console.error(`Unsupported type for update: ${type}`);
+      }
+      notificationService.notify('Mis à jour', 'success');
+      onRefresh();
+    } catch (error) {}
   };
 
   const performDelete = async (editedData) => {
-    switch (type) {
-      case 'song':
-        await deleteAudio(editedData._id);
-        await apiService.deleteSong(editedData._id);
-        notificationService.notify('Song deleted successfully', 'success');
-        break;
-      case 'album':
-        await deleteAlbum(editedData._id);
-        await apiService.deleteAlbum(editedData._id);
-        notificationService.notify('Album deleted successfully', 'success');
-        break;
-      case 'artist':
-        await deleteArtist(editedData._id);
-        await apiService.deleteArtist(editedData._id);
-        notificationService.notify('Artist deleted successfully', 'success');
-        break;
-      default:
-        console.error(`Unsupported type for delete: ${type}`);
+    try {
+      switch (type) {
+        case 'song':
+          await deleteAudio(editedData._id);
+          await apiService.deleteSong(editedData._id);
+          break;
+        case 'album':
+          await deleteAlbum(editedData._id);
+          await apiService.deleteAlbum(editedData._id);
+          break;
+        case 'artist':
+          await deleteArtist(editedData._id);
+          await apiService.deleteArtist(editedData._id);
+          break;
+        default:
+          console.error(`Unsupported type for delete: ${type}`);
+      }
+      notificationService.notify('Supprimé !', 'success');
+      onRefresh();
+    } catch (error) {
+      notificationService.notify('Erreur', 'warning');
+      console.error("Erreur lors de la suppression de l'élément :", error);
     }
   };
 

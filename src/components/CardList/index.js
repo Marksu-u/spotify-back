@@ -62,7 +62,6 @@ const CardList = ({ items, type, onRefresh }) => {
 
   const handleAddItem = async (newData, type) => {
     try {
-      console.log('newData :', newData);
       switch (type) {
         case 'artist':
           await apiService.createArtist(newData);
@@ -89,6 +88,8 @@ const CardList = ({ items, type, onRefresh }) => {
         case 'admin':
           await apiService.addAdmin(newData);
           break;
+        default:
+          console.error(`Unsupported type for add: ${type}`);
       }
       notificationService.notify('Ajout réussie', 'success');
       onRefresh();
