@@ -22,25 +22,43 @@ const getLastAudio = async () => {
   return await response.json();
 };
 
-const editAudio = async (id, audioData) => {
+const editAudio = async (audioData) => {
   const token = localStorage.getItem('userToken');
+  const id = audioData._id;
+
+  const data = {
+    _id: audioData._id,
+    title: audioData.title,
+    album: audioData.album,
+    albumId: audioData.albumId,
+  };
+
   const response = await fetch(`${API_URL}audio/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(audioData),
+    body: JSON.stringify(data),
   });
   if (!response.ok)
     throw new Error('Erreur lors de la modification de l’audio');
   return await response.json();
 };
 
-const uploadAudio = async (audioFile) => {
+const uploadAudio = async (audioData) => {
   const token = localStorage.getItem('userToken');
   const formData = new FormData();
-  formData.append('audioFile', audioFile);
+
+  for (const key in audioData) {
+    if (audioData.hasOwnProperty(key) && key !== 'audio') {
+      formData.append(key, audioData[key].toString());
+    }
+  }
+
+  if (audioData.audio instanceof File) {
+    formData.append('audioFile', audioData.audio);
+  }
 
   const response = await fetch(`${API_URL}audio/upload`, {
     method: 'POST',
@@ -49,7 +67,8 @@ const uploadAudio = async (audioFile) => {
     },
     body: formData,
   });
-  if (!response.ok) throw new Error('Erreur lors de l’upload de l’audio');
+
+  if (!response.ok) throw new Error(`Erreur lors de la création de l'audio`);
   return await response.json();
 };
 
@@ -192,9 +211,23 @@ const createAlbum = async (albumData) => {
 
 const editAlbum = async (albumData) => {
   const token = localStorage.getItem('userToken');
+  const _id = albumData._id;
+  const formData = new FormData();
 
   if (albumData.picture && albumData.picture instanceof File) {
-    formData.append('albumImage', albumData.picture);
+    formData.append('picture', albumData.picture);
+  } else if (
+    typeof albumData.picture === 'string' &&
+    albumData.picture.startsWith('data:image')
+  ) {
+    delete albumData.picture;
+  }
+
+  for (const key in albumData) {
+    if (albumData.hasOwnProperty(key) && key !== '_id') {
+      console.log('YO PHONG LINGING : ', key);
+      formData.append(key, albumData[key].toString());
+    }
   }
 
   const response = await fetch(`${API_URL}album/${_id}`, {
@@ -205,8 +238,9 @@ const editAlbum = async (albumData) => {
     body: formData,
   });
 
-  if (!response.ok)
+  if (!response.ok) {
     throw new Error('Erreur lors de la modification de l’album');
+  }
   return await response.json();
 };
 

@@ -73,6 +73,37 @@ export const deleteAudio = async (audio) => {
   store.delete(audio);
 };
 
+export const updateAudio = async (audio) => {
+  try {
+    const db = await openDatabase();
+    const transaction = db.transaction('audios', 'readwrite');
+    const store = transaction.objectStore('audios');
+
+    return new Promise((resolve, reject) => {
+      const request = store.put(audio);
+
+      request.onsuccess = () => {
+        console.log('Audio updated successfully.');
+        resolve(request.result);
+      };
+      request.onerror = () => {
+        console.error('Error updating Audio:', request.error);
+        reject(request.error);
+      };
+
+      transaction.oncomplete = () =>
+        console.log('Transaction for updating Audio completed.');
+      transaction.onerror = () => {
+        console.error('Transaction error:', transaction.error);
+        reject(transaction.error);
+      };
+    });
+  } catch (error) {
+    console.error('Error updating Audio:', error);
+    throw error;
+  }
+};
+
 export const saveArtists = async (artists) => {
   const db = await openDatabase();
   const transaction = db.transaction('artists', 'readwrite');
@@ -113,6 +144,37 @@ export const deleteArtist = async (artist) => {
   const transaction = db.transaction('artists', 'readwrite');
   const store = transaction.objectStore('artists');
   store.delete(artist);
+};
+
+export const updateArtist = async (artist) => {
+  try {
+    const db = await openDatabase();
+    const transaction = db.transaction('artists', 'readwrite');
+    const store = transaction.objectStore('artists');
+
+    return new Promise((resolve, reject) => {
+      const request = store.put(artist);
+
+      request.onsuccess = () => {
+        console.log('Artist updated successfully.');
+        resolve(request.result);
+      };
+      request.onerror = () => {
+        console.error('Error updating Artist:', request.error);
+        reject(request.error);
+      };
+
+      transaction.oncomplete = () =>
+        console.log('Transaction for updating Artist completed.');
+      transaction.onerror = () => {
+        console.error('Transaction error:', transaction.error);
+        reject(transaction.error);
+      };
+    });
+  } catch (error) {
+    console.error('Error updating Artist:', error);
+    throw error;
+  }
 };
 
 export const saveAlbums = async (albums) => {
@@ -170,4 +232,35 @@ export const deleteAlbum = async (album) => {
   const transaction = db.transaction('albums', 'readwrite');
   const store = transaction.objectStore('albums');
   store.delete(album);
+};
+
+export const updateAlbum = async (album) => {
+  try {
+    const db = await openDatabase();
+    const transaction = db.transaction('albums', 'readwrite');
+    const store = transaction.objectStore('albums');
+
+    return new Promise((resolve, reject) => {
+      const request = store.put(album);
+
+      request.onsuccess = () => {
+        console.log('Album updated successfully.');
+        resolve(request.result);
+      };
+      request.onerror = () => {
+        console.error('Error updating album:', request.error);
+        reject(request.error);
+      };
+
+      transaction.oncomplete = () =>
+        console.log('Transaction for updating album completed.');
+      transaction.onerror = () => {
+        console.error('Transaction error:', transaction.error);
+        reject(transaction.error);
+      };
+    });
+  } catch (error) {
+    console.error('Error updating album:', error);
+    throw error;
+  }
 };

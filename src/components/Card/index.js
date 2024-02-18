@@ -4,18 +4,83 @@ import { apiService } from '../../services/apiService';
 import { notificationService } from '../../services/notificationService';
 import {
   deleteAlbum,
+  updateAlbum,
   deleteArtist,
+  updateArtist,
   deleteAudio,
+  updateAudio,
 } from '../../services/indexerDBService';
+import {
+  transformAlbums,
+  transformAudio,
+  transformArtist,
+} from '../../services/transformService';
 import './index.css';
 
 const Button = lazy(() => import('../Button'));
 const Modal = lazy(() => import('../Modal'));
 
-const Card = ({ type, data, onClick }) => {
+const Card = ({ type, data, onClick, onRefresh }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentData, setCurrentData] = useState(null);
   const [actionType, setActionType] = useState(null);
+
+  const performUpdate = async (editedData) => {
+    switch (type) {
+      case 'song':
+        await apiService.editAudio(editedData);
+        const editAudio = await apiService.getSingleAudio(editedData._id);
+        const audioToEdit = await transformAudio(
+          editAudio.audios[0],
+          editAudio,
+          editAudio.name
+        );
+        await updateAudio(audioToEdit);
+        notificationService.notify('Song updated successfully', 'success');
+        onRefresh();
+        break;
+      case 'artist':
+        await apiService.editArtist(editedData);
+        const editArtist = await apiService.getSingleArtist(editedData._id);
+        const artistToEdit = await transformArtist(editArtist);
+        await updateArtist(artistToEdit);
+        notificationService.notify('Artist updated successfully', 'success');
+        onRefresh();
+        break;
+      case 'album':
+        await apiService.editAlbum(editedData);
+        const editAlbum = await apiService.getSingleAlbum(editedData._id);
+        const albumToEdit = await transformAlbums(editAlbum);
+        await updateAlbum(albumToEdit);
+        notificationService.notify('Album updated successfully', 'success');
+        onRefresh();
+        break;
+      default:
+        console.error(`Unsupported type for update: ${type}`);
+    }
+  };
+
+  const performDelete = async (editedData) => {
+    switch (type) {
+      case 'song':
+        await deleteAudio(editedData._id);
+        await apiService.deleteSong(editedData._id);
+        notificationService.notify('Song deleted successfully', 'success');
+        break;
+      case 'album':
+        await deleteAlbum(editedData._id);
+        await apiService.deleteAlbum(editedData._id);
+        notificationService.notify('Album deleted successfully', 'success');
+        break;
+      case 'artist':
+        await deleteArtist(editedData._id);
+        await apiService.deleteArtist(editedData._id);
+        notificationService.notify('Artist deleted successfully', 'success');
+        break;
+      default:
+        console.error(`Unsupported type for delete: ${type}`);
+    }
+  };
 
   const handleEdit = () => {
     setModalOpen(true);
@@ -32,69 +97,17 @@ const Card = ({ type, data, onClick }) => {
   const handleSubmit = async (editedData) => {
     setModalOpen(false);
 
-    switch (actionType) {
-      case 'update':
-        try {
-          await apiService.editItem(type, editedData);
-          notificationService.notify('Item updated successfully', 'success');
-        } catch (err) {
-          console.error('Error updating item:', err);
-          notificationService.notify('Error updating item', 'error');
-        }
-        break;
-
-      case 'delete':
-        switch (type) {
-          case 'song':
-            try {
-              await deleteAudio(editedData._id);
-              await apiService.deleteSong(editedData._id);
-              notificationService.notify(
-                'Song deleted successfully',
-                'success'
-              );
-            } catch (err) {
-              console.error('Error deleting song:', err);
-              notificationService.notify('Error deleting song', 'error');
-            }
-            break;
-
-          case 'album':
-            try {
-              await deleteAlbum(editedData._id);
-              await apiService.deleteAlbum(editedData._id);
-              notificationService.notify(
-                'Album deleted successfully',
-                'success'
-              );
-            } catch (err) {
-              console.error('Error deleting album:', err);
-              notificationService.notify('Error deleting album', 'error');
-            }
-            break;
-          case 'artist':
-            try {
-              await deleteArtist(editedData._id);
-              await apiService.deleteArtist(editedData._id);
-              notificationService.notify(
-                'Artist deleted successfully',
-                'success'
-              );
-            } catch (err) {
-              console.error('Error deleting artist:', err);
-            }
-            break;
-          default:
-            // console.warn(`Unhandled type: ${type}`);
-            notificationService.notify('Unauthorized', 'warning');
-            break;
-        }
-        break;
-
-      default:
-        // console.warn(`Unhandled actionType: ${actionType}`);
+    try {
+      if (actionType === 'update') {
+        await performUpdate(editedData);
+      } else if (actionType === 'delete') {
+        await performDelete(editedData);
+      } else {
         notificationService.notify('Unauthorized Action', 'warning');
-        break;
+      }
+    } catch (err) {
+      console.error(`Error processing ${actionType}:`, err);
+      notificationService.notify(`Error processing ${actionType}`, 'error');
     }
   };
 
@@ -203,10 +216,12 @@ Card.propTypes = {
   image: PropTypes.string,
   data: PropTypes.any,
   onClick: PropTypes.func,
+  onRefresh: PropTypes.func,
 };
 
 Card.defaultProps = {
   onClick: () => {},
+  onRefresh: () => {},
 };
 
 export default Card;

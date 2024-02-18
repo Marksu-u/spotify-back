@@ -19,7 +19,6 @@ const AdminDashboardView = () => {
         fecthedAdmins.map(transformAdmins)
       );
 
-      console.log(fecthedAdmins);
       setAdmins(transformedAdmins);
     } catch (error) {
       console.error(error);

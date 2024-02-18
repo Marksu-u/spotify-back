@@ -7,6 +7,7 @@ import Loader from '../Loader';
 const Input = lazy(() => import('../Input'));
 const Button = lazy(() => import('../Button'));
 const Select = lazy(() => import('../Select'));
+const YearPicker = lazy(() => import('../YearPicker'));
 
 const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
   const [formData, setFormData] = useState(actionType === 'add' ? {} : data);
@@ -94,7 +95,6 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
                 name="title"
                 value={formData.title || ''}
                 onChange={handleChange}
-                required
               />
               <Select
                 label="Artiste"
@@ -113,24 +113,24 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
                 label="Couverture"
                 name="picture"
                 onChange={handleChangeFile}
+                accept="image/png, image/jpeg"
               />
-              <Input
-                type="number"
+              <YearPicker
                 label="Année de sortie"
                 name="releaseYear"
                 value={
-                  formData.releaseDate
-                    ? new Date(formData.releaseDate).getFullYear()
-                    : ''
+                  formData.releaseDate instanceof Date
+                    ? formData.releaseDate
+                    : new Date(formData.releaseDate)
                 }
-                onChange={(e) => {
+                onChange={(date) => {
                   setFormData({
                     ...formData,
-                    releaseDate: new Date(e.target.value, 0, 1),
+                    releaseDate: date,
                   });
                 }}
-                min="1900"
-                max={new Date().getFullYear()}
+                startYear={1900}
+                endYear={new Date().getFullYear()}
               />
               <Input
                 label="Genre"
@@ -150,18 +150,6 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
                 onChange={handleChange}
               />
               <Select
-                label="Artiste"
-                name="artistId"
-                options={artists}
-                value={formData.artistId || ''}
-                onChange={(selectedArtistId) => {
-                  setFormData((prevData) => ({
-                    ...prevData,
-                    artistId: selectedArtistId,
-                  }));
-                }}
-              />
-              <Select
                 label="Album"
                 name="albumId"
                 options={albums}
@@ -176,9 +164,10 @@ const Modal = ({ isOpen, onClose, data, onSubmit, type, actionType }) => {
               {actionType === 'add' && (
                 <Input
                   type="file"
-                  label="Audio File"
-                  name="audioFile"
+                  label="Audio"
+                  name="audio"
                   onChange={handleChangeFile}
+                  accept=".mp3, .wav, .ogg, .m4a"
                 />
               )}
             </>

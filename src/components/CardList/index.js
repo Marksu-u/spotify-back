@@ -43,7 +43,7 @@ const CardList = ({ items, type, onRefresh }) => {
     () => (
       <Suspense fallback={<Loader />}>
         {currentItems.map((item) => (
-          <Card key={item._id} data={item} type={type} />
+          <Card key={item._id} data={item} type={type} onRefresh={onRefresh} />
         ))}
       </Suspense>
     ),
@@ -73,7 +73,6 @@ const CardList = ({ items, type, onRefresh }) => {
         case 'song':
           await apiService.uploadAudio(newData);
           const newAudio = await apiService.getLastAudio();
-          console.log(newAudio);
           const audioToAdd = await transformAudio(
             newAudio.audios[0],
             newAudio,

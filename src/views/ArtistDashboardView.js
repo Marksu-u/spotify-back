@@ -24,7 +24,6 @@ const ArtistDashboardView = () => {
         );
         await saveArtists(transformedArtists);
         artistData = transformedArtists;
-        console.log('Fetched : ', transformedArtists);
       }
 
       setArtists(artistData);
