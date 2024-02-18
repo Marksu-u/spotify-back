@@ -36,7 +36,7 @@ Lors de votre passage, je vous ai demandé d'ajouter des fonctionnalités :
 
 UN LIEN YOUTUBE S'IL VOUS PLAÎT, METTEZ-LA EN PRIVÉ
 
-Demande 1 :
+Demande 1 : CRUD & Pagination
 
 Demande 2 :
 
