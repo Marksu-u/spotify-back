@@ -36,12 +36,16 @@ Lors de votre passage, je vous ai demandé d'ajouter des fonctionnalités :
 
 UN LIEN YOUTUBE S'IL VOUS PLAÎT, METTEZ-LA EN PRIVÉ
 
-Demande 1 : CRUD & Pagination
+Demande 1 : [BackOffice - CRUD](https://youtu.be/4P0_RCTIMB4)
 
-Demande 2 :
+Demande 2 : [BackOffice - Recherche & Pagination](https://youtu.be/FQwNYmBZzMw)
 
-Demande 3 :
+Demande 3 : [FrontOffice - Lecture](https://youtu.be/-4vsOVK_zGw)
+
+Demande 4 : [FrontOffice - Navigation](https://youtu.be/0vRKaioqfdQ)
+
+Demande 5 : [FrontOffice - WebSockets](https://youtu.be/zJc5gVf8Skg)
 
 ### SOUHAITEZ-VOUS UNE ANALYSE ET DES RETOURS CONCRETS SUR VOTRE CODE ?
 
-Yes please
+J'ai fait d'la merde, vaut mieux pas
