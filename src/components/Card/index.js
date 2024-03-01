@@ -63,7 +63,7 @@ const Card = ({ type, data, onClick, onRefresh }) => {
       switch (type) {
         case 'song':
           await deleteAudio(editedData._id);
-          await apiService.deleteSong(editedData._id);
+          await apiService.deleteAudio(editedData._id);
           break;
         case 'album':
           await deleteAlbum(editedData._id);
